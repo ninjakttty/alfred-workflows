@@ -1,0 +1,20 @@
+#!/bin/zsh
+# Optional Terminal entry point: locate the current workflow after each reinstall.
+set -eu
+workflow="$(/usr/bin/python3 - <<'PY'
+from pathlib import Path
+import plistlib, subprocess
+roots = [Path.home() / 'Library/Application Support/Alfred/Alfred.alfredpreferences/workflows']
+result = subprocess.run(['/usr/bin/defaults', 'read', 'com.runningwithcrayons.Alfred-Preferences', 'syncfolder'], capture_output=True, text=True)
+if result.returncode == 0 and result.stdout.strip():
+    roots.insert(0, Path(result.stdout.strip()).expanduser() / 'Alfred.alfredpreferences/workflows')
+for root in roots:
+    for file in root.glob('*/info.plist'):
+        try:
+            if plistlib.loads(file.read_bytes()).get('bundleid') == 'net.ninjakitty.pad':
+                print(file.parent); raise SystemExit(0)
+        except (OSError, ValueError): pass
+raise SystemExit('Pad workflow not found. Import pad.alfredworkflow into Alfred first.')
+PY
+)"
+exec "$workflow/scratchpad" "$@"
