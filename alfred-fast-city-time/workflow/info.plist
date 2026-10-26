@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>net.ninjakitty.fast-city-time</string>
+	<key>category</key>
+	<string>Tools</string>
+	<key>connections</key>
+	<dict>
+		<key>47A1426A-8CDC-4A26-B34A-B75BA67F77FD</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>F5F8DB64-EFE9-4EF1-90F8-5B5CF39F319F</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>DA1E99C1-08C2-4713-BD43-28A5172E635D</string>
+				<key>modifiers</key>
+				<integer>524288</integer>
+				<key>modifiersubtext</key>
+				<string>Switch conversion direction, or add/remove favourite</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>D0915EAF-5508-432A-839C-99ACA30F2F34</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>F5F8DB64-EFE9-4EF1-90F8-5B5CF39F319F</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>DA1E99C1-08C2-4713-BD43-28A5172E635D</string>
+				<key>modifiers</key>
+				<integer>524288</integer>
+				<key>modifiersubtext</key>
+				<string>Switch conversion direction, or add/remove favourite</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Yuri Parsons</string>
+	<key>description</key>
+	<string>Instant offline city times. Type time for favourites or time &lt;city/country&gt; to search.</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Fast City Time</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<true/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>time</string>
+				<key>queuedelaycustom</key>
+				<integer>0</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>1</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runmodemode</key>
+				<integer>0</integer>
+				<key>script</key>
+				<string>cache="${alfred_workflow_cache:-$HOME/Library/Caches/com.runningwithcrayons.Alfred/Workflow Data/net.ninjakitty.fast-city-time}/v6"
+if [[ ! -x "$cache/city-time" || ! -f "$cache/cities.json" ]]; then
+  /bin/mkdir -p "$cache"
+  tmp=$(/usr/bin/mktemp "$cache/city-time.XXXXXX") || exit 1
+  /usr/bin/base64 -D -i city-time.b64 -o "$tmp" || exit 1
+  /bin/chmod +x "$tmp"
+  /bin/cp cities.json "$cache/cities.json"
+  /bin/mv "$tmp" "$cache/city-time"
+fi
+exec "$cache/city-time" "$@"
+</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>subtext</key>
+				<string>Instant offline city times. Type time for favourites or time &lt;city/country&gt; to search.</string>
+				<key>title</key>
+				<string>Fast City Time</string>
+				<key>type</key>
+				<integer>5</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>D0915EAF-5508-432A-839C-99ACA30F2F34</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>autopaste</key>
+				<false/>
+				<key>clipboardtext</key>
+				<string>{query}</string>
+				<key>ignoredynamicplaceholders</key>
+				<false/>
+				<key>transient</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.clipboard</string>
+			<key>uid</key>
+			<string>F5F8DB64-EFE9-4EF1-90F8-5B5CF39F319F</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>exec /usr/bin/osascript -l JavaScript toggle-favourite.js "$1"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>5</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>DA1E99C1-08C2-4713-BD43-28A5172E635D</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<true/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>now</string>
+				<key>queuedelaycustom</key>
+				<integer>0</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>1</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runmodemode</key>
+				<integer>0</integer>
+				<key>script</key>
+				<string>cache="${alfred_workflow_cache:-$HOME/Library/Caches/com.runningwithcrayons.Alfred/Workflow Data/net.ninjakitty.fast-city-time}/v6"
+if [[ ! -x "$cache/city-time" || ! -f "$cache/cities.json" ]]; then
+  /bin/mkdir -p "$cache"
+  tmp=$(/usr/bin/mktemp "$cache/city-time.XXXXXX") || exit 1
+  /usr/bin/base64 -D -i city-time.b64 -o "$tmp" || exit 1
+  /bin/chmod +x "$tmp"
+  /bin/cp cities.json "$cache/cities.json"
+  /bin/mv "$tmp" "$cache/city-time"
+fi
+exec "$cache/city-time" "$@"
+</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>subtext</key>
+				<string>Show the current time in all your favourite cities</string>
+				<key>title</key>
+				<string>Favourite City Times</string>
+				<key>type</key>
+				<integer>5</integer>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>47A1426A-8CDC-4A26-B34A-B75BA67F77FD</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string># Fast City Time
+
+Type `time` for San Francisco, Dublin and Berlin. Type `time &lt;city or country&gt;` to search 431 bundled city/time-zone locations. Results use 12-hour time and your Mac’s local timezone for differences. Daylight saving uses macOS timezone rules.
+
+Enter copies the time. Command-Enter copies the city and time. Country searches display up to 40 matches. Results refresh every 30 seconds while visible. No network connection or external runtime is required.
+
+Built for Apple Silicon Macs. The bundled native program is decoded into Alfred’s cache on first use. Source code and city index are included. City coverage is curated from the system IANA timezone table with additional major cities; it is not an exhaustive gazetteer.
+
+City timezone mapping: IANA zone.tab / iso3166.tab (public domain), plus additional aliases.
+
+
+## Options
+Open Configure Workflow to enable 24-hour time or edit Favourites (one city per line). Add/remove/reorder lines to manage favourites. Empty means no favourites. Invalid or ambiguous entries show a helpful message. Use City|Area/Zone to disambiguate.
+
+
+Press Option-Enter on any city to add or remove it from favourites. New favourites are appended. Changes update the Favourites configuration and reopen the list.
+
+
+## Time conversion
+Type time berlin 3pm to convert today’s 3 PM in Berlin to your local time. Option-Enter switches direction (the query gains @local), and switches back when pressed again. Enter copies the destination time; Command-Enter copies the full conversion with dates. Accepts 3pm, 3:30pm, 15:30, and 15. Dates use today in the source zone. Skipped DST times show an error; repeated times use the first occurrence. Normal city searches retain favourite management.
+
+
+Country flags appear beside country names in city and conversion subtitles. UTC or missing country data uses a globe. Flags are generated offline from bundled ISO country codes.
+
+
+Type now to show all saved favourites immediately. It shares the same favourites, time format, flags, and copy/favourite actions as time.
+</string>
+	<key>uidata</key>
+	<dict>
+		<key>47A1426A-8CDC-4A26-B34A-B75BA67F77FD</key>
+		<dict>
+			<key>xpos</key>
+			<integer>50</integer>
+			<key>ypos</key>
+			<integer>250</integer>
+		</dict>
+		<key>D0915EAF-5508-432A-839C-99ACA30F2F34</key>
+		<dict>
+			<key>xpos</key>
+			<integer>50</integer>
+			<key>ypos</key>
+			<integer>50</integer>
+		</dict>
+		<key>DA1E99C1-08C2-4713-BD43-28A5172E635D</key>
+		<dict>
+			<key>xpos</key>
+			<integer>350</integer>
+			<key>ypos</key>
+			<integer>220</integer>
+		</dict>
+		<key>F5F8DB64-EFE9-4EF1-90F8-5B5CF39F319F</key>
+		<dict>
+			<key>xpos</key>
+			<integer>350</integer>
+			<key>ypos</key>
+			<integer>50</integer>
+		</dict>
+	</dict>
+	<key>userconfigurationconfig</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<false/>
+				<key>required</key>
+				<false/>
+				<key>text</key>
+				<string>Use 24-hour time</string>
+			</dict>
+			<key>description</key>
+			<string>Use 24-hour time for results and copied text. Unchecked uses 12-hour time with AM/PM.</string>
+			<key>label</key>
+			<string>Time format</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>use_24_hour</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>San Francisco
+Dublin
+Berlin</string>
+				<key>required</key>
+				<false/>
+				<key>trim</key>
+				<true/>
+				<key>verticalsize</key>
+				<integer>7</integer>
+			</dict>
+			<key>description</key>
+			<string>One exact city name per line, in display order. Add or delete lines to add or remove favourites. Leave empty for no favourites. Search with time &lt;city&gt; to find supported names. For duplicate names use City|Area/Zone, for example San Francisco|America/Los_Angeles.</string>
+			<key>label</key>
+			<string>Favourites</string>
+			<key>type</key>
+			<string>textarea</string>
+			<key>variable</key>
+			<string>favourite_cities</string>
+		</dict>
+	</array>
+	<key>variablesdontexport</key>
+	<array/>
+	<key>version</key>
+	<string>1.5.0</string>
+	<key>webaddress</key>
+	<string>https://www.ninjakitty.net</string>
+</dict>
+</plist>

@@ -1,0 +1,8 @@
+{
+  "first_cache_setup_ms": 112.0,
+  "runs": 60,
+  "median_ms": 15.6,
+  "p95_ms": 25.3,
+  "max_ms": 85.7,
+  "checks": "Favourites, aliases, case/accent folding, country search, no matches, current times including fractional offset; wrapper and native startup included. Alfred UI rendering excluded."
+}

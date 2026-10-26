@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>net.ninjakitty.finder-iterm</string>
+	<key>category</key>
+	<string>Tools</string>
+	<key>connections</key>
+	<dict>
+		<key>cdf-external</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>cdf-script</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>cdf-keyword</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>cdf-script</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>cdi-external</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>cdi-script</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>cdi-keyword</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>cdi-script</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Yuri Parsons</string>
+	<key>description</key>
+	<string>Move between the current Finder folder and selected iTerm tab.</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Finder iTerm</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>cdf</string>
+				<key>subtext</key>
+				<string>New Finder window</string>
+				<key>text</key>
+				<string>Open iTerm directory in Finder</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>cdf-keyword</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>/usr/bin/osascript cdf.applescript</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>5</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>cdf-script</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>available</key>
+				<integer>0</integer>
+				<key>passinput</key>
+				<false/>
+				<key>triggerid</key>
+				<string>cdf</string>
+				<key>workflowid</key>
+				<string>net.ninjakitty.finder-iterm</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.external</string>
+			<key>uid</key>
+			<string>cdf-external</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>cdi</string>
+				<key>subtext</key>
+				<string>New iTerm tab</string>
+				<key>text</key>
+				<string>Open Finder folder in iTerm</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>cdi-keyword</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>/usr/bin/osascript cdi.applescript</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>5</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>cdi-script</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>available</key>
+				<integer>0</integer>
+				<key>passinput</key>
+				<false/>
+				<key>triggerid</key>
+				<string>cdi</string>
+				<key>workflowid</key>
+				<string>net.ninjakitty.finder-iterm</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.external</string>
+			<key>uid</key>
+			<string>cdi-external</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string># Finder iTerm
+
+![Workflow icon](icon.png)
+
+- `cdf` (cd in Finder): open the selected session in the current iTerm window in a new Finder window.
+- `cdi` (cd in iTerm): open the front Finder window's folder in a new iTerm tab. If no iTerm window exists, create one.
+
+No arguments are needed. With split panes, `cdf` uses the active pane. `cdi` uses the Finder window's folder, not a selected item. Virtual Finder locations such as Recents are not ordinary folders.
+
+Requires Alfred 5 with Powerpack and iTerm2. macOS may ask permission for Alfred to control Finder and iTerm. `cdf` uses the directory iTerm reports; enable iTerm shell integration if it is unavailable or stale. These commands are intended for local directories, not remote SSH directories.
+
+Source files and the installable export live in this folder. `info.plist` defines both keywords and external triggers for integration testing.
+
+Author: Yuri Parsons • https://www.ninjakitty.net
+</string>
+	<key>uidata</key>
+	<dict>
+		<key>cdf-external</key>
+		<dict>
+			<key>xpos</key>
+			<integer>50</integer>
+			<key>ypos</key>
+			<integer>100</integer>
+		</dict>
+		<key>cdf-keyword</key>
+		<dict>
+			<key>xpos</key>
+			<integer>50</integer>
+			<key>ypos</key>
+			<integer>0</integer>
+		</dict>
+		<key>cdf-script</key>
+		<dict>
+			<key>xpos</key>
+			<integer>350</integer>
+			<key>ypos</key>
+			<integer>0</integer>
+		</dict>
+		<key>cdi-external</key>
+		<dict>
+			<key>xpos</key>
+			<integer>50</integer>
+			<key>ypos</key>
+			<integer>340</integer>
+		</dict>
+		<key>cdi-keyword</key>
+		<dict>
+			<key>xpos</key>
+			<integer>50</integer>
+			<key>ypos</key>
+			<integer>240</integer>
+		</dict>
+		<key>cdi-script</key>
+		<dict>
+			<key>xpos</key>
+			<integer>350</integer>
+			<key>ypos</key>
+			<integer>240</integer>
+		</dict>
+	</dict>
+	<key>variablesdontexport</key>
+	<array/>
+	<key>version</key>
+	<string>1.0.0</string>
+	<key>webaddress</key>
+	<string>https://www.ninjakitty.net</string>
+</dict>
+</plist>
