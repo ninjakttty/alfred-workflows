@@ -8,7 +8,7 @@ Bundle ID: `net.ninjakitty.fast-city-time`.
 
 ## Install and use
 
-Open [`dist/alfred-fast-city-time.alfredworkflow`](dist/alfred-fast-city-time.alfredworkflow) and import it into Alfred. Requires Alfred 5 with Powerpack. The included executable was built on an Apple Silicon Mac; rebuild on the target Mac when necessary. Runtime needs no Python, Swift compiler, or network access.
+Open [`dist/city-time.alfredworkflow`](dist/city-time.alfredworkflow) and import it into Alfred. Requires Alfred 5 with Powerpack. The included executable was built on an Apple Silicon Mac; rebuild on the target Mac when necessary. Runtime needs no Python, Swift compiler, or network access.
 
 - `now` shows all your saved favourites immediately.
 - `time` also shows favourites. Defaults are San Francisco, Dublin, and Berlin, in that order.
@@ -82,7 +82,7 @@ python3 scripts/verify_conversion.py
 python3 scripts/verify_flags.py
 ```
 
-The build produces `dist/alfred-fast-city-time.alfredworkflow`. The verification script checks favourites, aliases, country search, unmatched queries, current times, and fractional-hour offsets, then measures 60 launches. Temporary binaries, caches, and new benchmark results go under `.build/` and are ignored by Git.
+The build produces `dist/city-time.alfredworkflow`. The verification script checks favourites, aliases, country search, unmatched queries, current times, and fractional-hour offsets, then measures 60 launches. Temporary binaries, caches, and new benchmark results go under `.build/` and are ignored by Git.
 
 To redraw the icon:
 

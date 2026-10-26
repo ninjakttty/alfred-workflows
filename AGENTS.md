@@ -6,7 +6,7 @@ For every Alfred workflow created or updated for this user:
 - Use the bundle ID format `net.ninjakitty.{workflow}`, replacing `{workflow}` with the lowercase hyphenated workflow name (for example, `net.ninjakitty.fast-city-time`).
 - Set Created By (`createdby`) to `Yuri Parsons`.
 - Set the website (`webaddress`) to `https://www.ninjakitty.net`.
-- Name GitHub repositories, workflow folders, and exported workflow files using lowercase `alfred-<workflow-name>` (for example, `alfred-finder-iterm` and `alfred-finder-iterm.alfredworkflow`).
+- Name standalone workflow GitHub repositories using lowercase `alfred-<workflow-name>`. Inside the shared `alfred-workflows` repository, omit the redundant `alfred-` prefix from workflow folders and exported files (for example, `finder-iterm/` and `finder-iterm.alfredworkflow`).
 - Include an appropriate workflow icon in the workflow and its installable export.
 
 Apply these defaults across projects and chats unless the user explicitly requests otherwise.

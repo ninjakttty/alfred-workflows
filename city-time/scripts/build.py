@@ -19,7 +19,7 @@ for obj in metadata["objects"]:
     if obj["type"] == "alfred.workflow.input.scriptfilter":
         obj["config"]["script"] = (WORKFLOW / "run.zsh").read_text()
 (WORKFLOW / "info.plist").write_bytes(plistlib.dumps(metadata))
-output = ROOT / "dist" / "alfred-fast-city-time.alfredworkflow"
+output = ROOT / "dist" / "city-time.alfredworkflow"
 output.parent.mkdir(exist_ok=True)
 with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as archive:
     for file in sorted(WORKFLOW.iterdir()):
