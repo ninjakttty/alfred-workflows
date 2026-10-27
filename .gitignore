@@ -10,3 +10,6 @@ pad/workflow/.scratchpad/
 !.vscode/extensions.json
 !.vscode/launch.json
 !.vscode/tasks.json
+
+# Local private files
+/private/
