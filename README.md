@@ -8,3 +8,5 @@ Alfred workflows by **Yuri Parsons**
 - [Pad](pad/README.md): floating note with Alfred controls.
 
 - [Copy Directory Path](copy-directory-path/README.md): copy the current Finder or iTerm2 directory to the clipboard.
+
+- [AI Spell](ai-spell/README.md): native on-device Apple Intelligence spelling suggestions and definitions.
