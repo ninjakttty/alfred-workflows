@@ -27,23 +27,15 @@ uidata.selection.note = 'Hyper+S shows Alfred immediately with the selected text
 object('external', 'trigger.external', { triggerid: 'spell', workflowid: 'net.ninjakitty.ai-spell', passinput: true, available: 0 }, 20, 230)
 link('external', 'spell')
 for (const [id, autopaste, modifiers, y] of [['paste', true, 0, 50], ['copy', false, 1048576, 230]]) {
-  object('trace-' + id, 'action.script', { script: `exec ./ai-spell-native action ${id} "$1"`, type: 5, scriptargtype: 1, scriptfile: '', escaping: 102, concurrently: true }, 580, y, 2)
   object(id, 'output.clipboard', { clipboardtext: '{query}', autopaste, ignoredynamicplaceholders: true, transient: false }, 850, y, 3)
-  link('spell', 'trace-' + id, modifiers, modifiers ? 'Copy correction to clipboard' : '')
-  link('trace-' + id, id)
+  link('spell', id, modifiers, modifiers ? 'Copy correction to clipboard' : '')
 }
-object('debug-keyword', 'input.keyword', { keyword: 'spell-debug', argumenttype: 2, withspace: false, text: 'Open AI Spell diagnostics', subtext: 'Open the metadata-only diagnostic log' }, 20, 430)
-object('debug-open', 'action.script', {
-  script: 'cache="${alfred_workflow_cache:-$HOME/Library/Caches/com.runningwithcrayons.Alfred/Workflow Data/net.ninjakitty.ai-spell}"\n/bin/mkdir -p "$cache"\n/usr/bin/touch "$cache/debug.jsonl"\n/bin/chmod 600 "$cache/debug.jsonl"\n/usr/bin/open -a TextEdit "$cache/debug.jsonl"',
-  type: 5, scriptargtype: 1, scriptfile: '', escaping: 102, concurrently: false,
-}, 300, 430, 2)
-link('debug-keyword', 'debug-open')
 const info = {
   name: 'AI Spell', bundleid: 'net.ninjakitty.ai-spell', createdby: 'Yuri Parsons',
   webaddress: 'https://www.ninjakitty.net', version: '2.0.0',
   description: 'Native on-device Apple Intelligence spelling suggestions and definitions.',
   category: 'Tools', disabled: false, objects, connections, uidata,
-  readme: fs.readFileSync(path.join(root, 'README.md'), 'utf8'), variables: { debug_mode: '1' }, variablesdontexport: [],
+  readme: fs.readFileSync(path.join(root, 'README.md'), 'utf8'), variables: {}, variablesdontexport: [],
 }
 function xml(value) {
   if (typeof value === 'boolean') return value ? '<true/>' : '<false/>'

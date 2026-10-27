@@ -1,6 +1,4 @@
-import AppKit
 import CryptoKit
-import Darwin
 import Foundation
 import FoundationModels
 
@@ -89,31 +87,6 @@ struct Store {
                Date().timeIntervalSince(date) > 900 { try? fm.removeItem(at: url) }
         }
     }
-    func log(_ event: String, _ fields: [String: Any] = [:]) {
-        guard ProcessInfo.processInfo.environment["debug_mode"] != "0" else { return }
-        let allowed: Set<String> = ["request_id", "input_length", "suggestion_count", "duration_ms", "status", "action", "reason"]
-        var record = fields.filter { allowed.contains($0.key) }
-        record["event"] = event
-        record["timestamp"] = ISO8601DateFormatter().string(from: Date())
-        record["frontmost_bundle"] = NSWorkspace.shared.frontmostApplication?.bundleIdentifier ?? "unknown"
-        guard var data = try? JSONSerialization.data(withJSONObject: record, options: [.sortedKeys]) else { return }
-        data.append(10)
-        let lock = open(root.appendingPathComponent("debug.lock").path, O_CREAT | O_RDWR, 0o600)
-        guard lock >= 0 else { return }
-        defer { flock(lock, LOCK_UN); close(lock) }
-        flock(lock, LOCK_EX)
-        let url = root.appendingPathComponent("debug.jsonl")
-        if let attributes = try? fm.attributesOfItem(atPath: url.path),
-           let size = attributes[.size] as? NSNumber, size.intValue > 1_048_576 {
-            let previous = root.appendingPathComponent("debug.jsonl.1")
-            try? fm.removeItem(at: previous)
-            try? fm.moveItem(at: url, to: previous)
-        }
-        let fd = open(url.path, O_CREAT | O_WRONLY | O_APPEND, 0o600)
-        guard fd >= 0 else { return }
-        defer { close(fd) }
-        data.withUnsafeBytes { buffer in _ = Darwin.write(fd, buffer.baseAddress, buffer.count) }
-    }
 }
 
 func feedback(_ state: RequestState, id: String) -> [String: Any] {
@@ -176,7 +149,6 @@ func filter(_ query: String, store: Store) throws -> [String: Any] {
         try store.save(failed, id: id)
         return feedback(failed, id: id)
     }
-    store.log("request_started", ["request_id": id, "input_length": text.count])
     return feedback(state, id: id)
 }
 
@@ -232,20 +204,16 @@ func worker(_ id: String, store: Store) async {
         guard !suggestions.isEmpty else { throw ModelUnavailable(message: "No usable suggestions. Try another word.") }
         state.status = "ready"
         state.suggestions = suggestions
-        store.log("model_finished", ["request_id": id, "suggestion_count": suggestions.count,
-                                     "duration_ms": Int(Date().timeIntervalSince(start) * 1000)])
         try store.save(state, id: id)
     } catch is CancellationError {
         try? store.fm.removeItem(at: store.file(id, "input.txt"))
         state.status = "cancelled"
         state.message = "Check cancelled. Run spell again."
-        store.log("request_cancelled", ["request_id": id])
         try? store.save(state, id: id)
     } catch {
         state.status = "error"
         state.message = (error as? ModelUnavailable)?.message ?? "Apple Intelligence could not check this text. Try again."
         try? store.fm.removeItem(at: store.file(id, "input.txt"))
-        store.log("model_failed", ["request_id": id, "reason": "model_error"])
         try? store.save(state, id: id)
     }
 }
@@ -261,11 +229,6 @@ struct AISpell {
             case "worker":
                 guard args.count == 2 else { return }
                 await worker(args[1], store: store)
-            case "action":
-                let value = args.count > 2 ? args[2] : ""
-                store.log("action_requested", ["request_id": safeID(ProcessInfo.processInfo.environment["spell_request_id"]) ?? "unknown",
-                                               "action": args.count > 1 ? args[1] : "unknown", "input_length": value.count])
-                FileHandle.standardOutput.write(Data(value.utf8))
             default:
                 let output = try filter(args.count > 1 ? args[1] : "", store: store)
                 FileHandle.standardOutput.write(try JSONSerialization.data(withJSONObject: output, options: [.sortedKeys]))

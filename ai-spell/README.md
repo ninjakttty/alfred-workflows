@@ -21,11 +21,7 @@ This version calls Apple's `SystemLanguageModel` directly through the native Swi
 
 Input is limited to 2,000 characters. Generation uses a structured Swift schema; empty and duplicate suggestions are removed. Model availability and generation errors appear in Alfred. A check times out after two minutes.
 
-Request files have owner-only permissions in Alfred's workflow cache. Input files are removed after generation or cancellation. Result files expire after fifteen minutes and are cleaned up on subsequent requests. No submitted text or generated content is recorded in diagnostic logs.
-
-## Diagnostics
-
-Run **`spell-debug`** to open `debug.jsonl`. Diagnostics record request IDs, input length, model timing and result count, cancellation, active app bundle ID, and paste/copy requests. An action log records a request, not proof of successful replacement. Set `debug_mode` to `0` in workflow variables to disable logs. Logs rotate at about 1 MiB and retain one previous file.
+Request files have owner-only permissions in Alfred's workflow cache. Input files are removed after generation or cancellation. Result files expire after fifteen minutes and are cleaned up on subsequent requests. The workflow does not write diagnostic logs.
 
 ## Development
 

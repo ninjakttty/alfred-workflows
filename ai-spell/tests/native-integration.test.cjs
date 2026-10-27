@@ -8,7 +8,7 @@ const { setTimeout: delay } = require('node:timers/promises')
 const binary = path.resolve(__dirname, '../ai-spell-native')
 function setup() {
   const cache = fs.mkdtempSync(path.join(os.tmpdir(), 'ai-spell-test-'))
-  const env = { ...process.env, alfred_workflow_cache: cache, debug_mode: '1' }
+  const env = { ...process.env, alfred_workflow_cache: cache }
   const filter = (query, id) => JSON.parse(execFileSync(binary, ['filter', query], { env: { ...env, ...(id ? { spell_request_id: id } : {}) } }))
   const state = id => JSON.parse(fs.readFileSync(path.join(cache, 'request-' + id, 'state.json')))
   return { cache, env, filter, state }
@@ -34,9 +34,7 @@ test('real model returns suggestions in the same polling session', { timeout: 90
     assert.ok(response.items.every(row => row.subtitle.length > 0))
     assert.ok(response.items.length <= 3)
     assert.equal(fs.existsSync(path.join(cache, 'request-' + id, 'input.txt')), false)
-    const log = fs.readFileSync(path.join(cache, 'debug.jsonl'), 'utf8')
-    assert.equal(log.includes('heelo'), false)
-    assert.equal(log.includes('greeting'), false)
+    assert.equal(fs.readdirSync(cache).some(name => name.startsWith('debug.')), false)
     console.log('Native model ready in', Date.now() - started, 'ms')
   } finally { fs.rmSync(cache, { recursive: true, force: true }) }
 })
@@ -53,19 +51,6 @@ test('clearing the filter invalidates and cancels a pending request', { timeout:
   } finally { fs.rmSync(cache, { recursive: true, force: true }) }
 })
 
-test('action diagnostics preserve exact text and do not record it', () => {
-  const { cache, env } = setup()
-  try {
-    const text = 'hello\n$(never execute)\'"'
-    const output = execFileSync(binary, ['action', 'paste', text], { env, encoding: 'utf8' })
-    assert.equal(output, text)
-    const record = JSON.parse(fs.readFileSync(path.join(cache, 'debug.jsonl'), 'utf8').trim())
-    assert.equal(record.action, 'paste')
-    assert.equal(record.input_length, text.length)
-    assert.equal(JSON.stringify(record).includes('never execute'), false)
-  } finally { fs.rmSync(cache, { recursive: true, force: true }) }
-})
-
 test('dismissal stops polling and cancels model work without a UI callback', { timeout: 20000 }, async () => {
   const { cache, filter, state } = setup()
   try {
@@ -74,8 +59,6 @@ test('dismissal stops polling and cancels model work without a UI callback', { t
     // Do not rerun the filter: this is how Alfred behaves after Escape.
     for (let i = 0; i < 150 && state(id).status === 'loading'; i++) await delay(100)
     assert.equal(state(id).status, 'cancelled')
-    const records = fs.readFileSync(path.join(cache, 'debug.jsonl'), 'utf8')
-    assert.ok(records.includes('request_cancelled'))
   } finally { fs.rmSync(cache, { recursive: true, force: true }) }
 })
 
