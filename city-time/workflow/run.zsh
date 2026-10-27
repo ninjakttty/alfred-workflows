@@ -1,4 +1,4 @@
-cache="${alfred_workflow_cache:-$HOME/Library/Caches/com.runningwithcrayons.Alfred/Workflow Data/net.ninjakitty.fast-city-time}/v6"
+cache="${alfred_workflow_cache:-$HOME/Library/Caches/com.runningwithcrayons.Alfred/Workflow Data/net.ninjakitty.fast-city-time}/v7"
 if [[ ! -x "$cache/city-time" || ! -f "$cache/cities.json" ]]; then
   /bin/mkdir -p "$cache"
   tmp=$(/usr/bin/mktemp "$cache/city-time.XXXXXX") || exit 1

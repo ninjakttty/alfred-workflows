@@ -102,7 +102,11 @@ do {
  let updatedFavourites = saved ? favourites.filter { !matchesEntry(c, $0) } : favourites + [c.city + "|" + c.zone]
  items.append(["uid": c.city + ":" + c.zone, "title": c.city + "  ·  " + t, "subtitle": c.flag + " " + c.country + " · " + day.string(from: now) + " · " + difference, "arg": t, "valid": true, "variables": ["clock_action": "copy"], "text": ["copy": t, "largetype": t], "mods": ["cmd": ["arg": c.city + ": " + t, "subtitle": "Copy city and time"], "alt": ["variables": ["clock_action": "favourite"], "arg": updatedFavourites.joined(separator: "\n"), "subtitle": (saved ? "Remove " : "Add ") + c.city + (saved ? " from favourites" : " to favourites"), "valid": true]]])
  }
- if q.isEmpty { items.append(contentsOf: favouriteIssues) }
+ // Without UIDs, Alfred cannot override the configured order with learned rankings.
+ if q.isEmpty {
+ items = items.map { item in var ordered = item; ordered.removeValue(forKey: "uid"); return ordered }
+ items.append(contentsOf: favouriteIssues)
+ }
  if items.isEmpty {
  items = [["title": q.isEmpty ? "No favourite cities" : "No matching cities",
  "subtitle": q.isEmpty ? "Search for a city, then press ⌥Enter to add it to favourites" : "Try a city, country, or time-zone name", "valid": false]]

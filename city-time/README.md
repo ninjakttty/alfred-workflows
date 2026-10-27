@@ -25,7 +25,7 @@ Open [`dist/city-time.alfredworkflow`](dist/city-time.alfredworkflow) and import
 In Alfred Preferences → Workflows → Fast City Time, choose **Configure Workflow…**:
 
 - **Use 24-hour time**: enable for `21:05`; leave unchecked for `9:05 PM`. Copied text follows this setting.
-- **Favourites**: one exact city name per line, in the order you want. Add a line to add a favourite, remove a line to delete it, or rearrange lines to reorder. Defaults remain San Francisco, Dublin, Berlin. An empty list shows no favourites; city searches still work.
+- **Favourites**: one exact city name per line, in the order you want. Add a line to add a favourite, remove a line to delete it, or rearrange lines to reorder. Both `now` and `time` follow this order exactly, regardless of past selections. Defaults remain San Francisco, Dublin, Berlin. An empty list shows no favourites; city searches still work.
 
 Use `time <city>` to find supported names. Duplicate entries are shown once. Unknown or ambiguous names show a configuration message instead of being silently dropped. For ambiguous names, use `City|Area/Zone` (for example `San Francisco|America/Los_Angeles`). Commas and semicolons are also accepted as separators.
 
@@ -93,7 +93,7 @@ xcrun swiftc -module-cache-path .build/module-cache scripts/draw-icon.swift -o .
 python3 scripts/build.py
 ```
 
-The launcher currently caches the executable and index in a `v6` directory. When changing either, increment that cache-directory suffix in `workflow/run.zsh` before building so an installed update loads the new files.
+The launcher currently caches the executable and index in a `v7` directory. When changing either, increment that cache-directory suffix in `workflow/run.zsh` before building so an installed update loads the new files.
 
 ## Performance
 

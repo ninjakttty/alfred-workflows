@@ -10,6 +10,10 @@ def run(query='',**options):
 def names(items):return [x['title'].split('  ·  ')[0] for x in items]
 assert names(run())==['San Francisco','Dublin','Berlin']
 assert names(run(favourite_cities='Tokyo\nDublin'))==['Tokyo','Dublin']
+assert all('uid' not in item for item in run())
+assert all('uid' not in item for item in run(favourite_cities='Berlin\nSan Francisco\nDublin'))
+assert names(run(favourite_cities='Berlin\nSan Francisco\nDublin'))==['Berlin','San Francisco','Dublin']
+assert 'uid' in run('berlin')[0]
 assert names(run(favourite_cities='Berlin'))==['Berlin']
 assert names(run(favourite_cities=' berlin \nBerlin;Tokyo, Dublin'))==['Berlin','Tokyo','Dublin']
 assert names(run(favourite_cities='San Francisco|America/Los_Angeles'))==['San Francisco']
@@ -34,5 +38,5 @@ assert config['favourite_cities']['config']['default']=='San Francisco\nDublin\n
 assert d['bundleid']=='net.ninjakitty.fast-city-time'
 assert d['createdby']=='Yuri Parsons'
 assert d['webaddress']=='https://www.ninjakitty.net'
-assert '/v6"' in (root/'workflow/run.zsh').read_text()
+assert '/v7"' in (root/'workflow/run.zsh').read_text()
 print('Time format, favourites add/remove/reorder/empty/invalid handling, copy output, defaults, and metadata checks passed.')
