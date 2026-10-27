@@ -1,0 +1,41 @@
+{
+    "configurations": [
+        {
+            "name": "nodemon current file",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "openOnSessionStart",
+            "program": "${file}",
+            "request": "launch",
+            "restart": true,
+            "runtimeExecutable": "nodemon",
+            "runtimeArgs": [
+                "--harmony-top-level-await"
+            ],
+            "skipFiles": [
+                "<node_internals>/**",
+                "${workspaceFolder}/node_modules/**/*.js"
+            ],
+            "type": "node"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:alfred-workflows}/pad",
+            "name": "Debug Scratchpad (pad)",
+            "target": "Scratchpad",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug Scratchpad (pad)"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:alfred-workflows}/pad",
+            "name": "Release Scratchpad (pad)",
+            "target": "Scratchpad",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release Scratchpad (pad)"
+        }
+    ]
+}
