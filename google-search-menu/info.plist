@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>net.ninjakitty.google-search-menu</string>
+	<key>category</key>
+	<string>Internet</string>
+	<key>connections</key>
+	<dict>
+		<key>keyword</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>save-query</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>menu</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>open</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>save-query</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>menu</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Yuri Parsons</string>
+	<key>description</key>
+	<string>Choose Google, Reddit, or FTL searches in a new Chrome window.</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Google Search Menu</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>keyword</key>
+				<string>g</string>
+				<key>subtext</key>
+				<string>Choose Google, Reddit, or FTL → new Chrome window</string>
+				<key>text</key>
+				<string>Google Search Menu</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>keyword</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string></string>
+				<key>passthroughargument</key>
+				<false/>
+				<key>variables</key>
+				<dict>
+					<key>search_query</key>
+					<string>{query}</string>
+				</dict>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>save-query</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>fixedorder</key>
+				<true/>
+				<key>items</key>
+				<string>[{"title": "Google", "subtitle": "{var:search_query} \u2014 New Chrome window", "arg": "{var:search_query}", "imagefile": "0574242b5f842b5ba17c15926e48256836b1fb46.png"}, {"title": "Google + Reddit", "subtitle": "{var:search_query} reddit \u2014 New Chrome window", "arg": "{var:search_query} reddit", "imagefile": "27134cd3c9803335d3e5ffcf81d89b8fa1febf35.png"}, {"title": "Google + FTL", "subtitle": "{var:search_query} ftl \u2014 New Chrome window", "arg": "{var:search_query} ftl", "imagefile": "f29aaaf208a766f3d93713324f8f868d3137b2ec.png"}]</string>
+				<key>keyword</key>
+				<string></string>
+				<key>matchmode</key>
+				<integer>0</integer>
+				<key>runningsubtext</key>
+				<string></string>
+				<key>subtext</key>
+				<string>Google, Reddit, or FTL</string>
+				<key>title</key>
+				<string>Choose a search</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.listfilter</string>
+			<key>uid</key>
+			<string>menu</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>exec /usr/bin/osascript open-chrome.applescript "$1"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>5</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>open</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string># Google Search Menu
+
+Type `g hello` in Alfred, then press Return to show three choices:
+
+1. **Google** — searches for `hello` (selected first).
+2. **Google + Reddit** — searches for `hello reddit`.
+3. **Google + FTL** — searches for `hello ftl`.
+
+Press Return again to open the selected search in a **new normal Google Chrome window**, using Chrome's current normal profile. Use the arrow keys to choose a different option. Each choice has a custom icon. Reddit and FTL are ordinary appended words, not site restrictions.
+
+Requires Alfred 5 with Powerpack and Google Chrome. macOS may request permission for Alfred to control Chrome. Errors remain visible in Alfred's workflow debugger.
+
+Install `google-search-menu.alfredworkflow`. No extra runtimes or dependencies are needed; the menu uses a native List Filter and the Chrome action uses macOS AppleScript. Edit the List Filter items in Alfred to customize the choices.
+
+Rebuild icons with `swift scripts/draw-icons.swift "$PWD"` from this folder. Repackage with `python3 scripts/build.py`; this packages the tracked native List Filter images. The local `icons/` source artwork folder is ignored by Git. To check query encoding, compile `open-chrome.applescript` with `osacompile -o /tmp/google-search-menu-open.scpt open-chrome.applescript`, then run `osascript scripts/test-search.applescript /tmp/google-search-menu-open.scpt`.
+
+Author: Yuri Parsons • https://www.ninjakitty.net
+</string>
+	<key>uidata</key>
+	<dict>
+		<key>keyword</key>
+		<dict>
+			<key>xpos</key>
+			<integer>0</integer>
+			<key>ypos</key>
+			<integer>50</integer>
+		</dict>
+		<key>menu</key>
+		<dict>
+			<key>xpos</key>
+			<integer>520</integer>
+			<key>ypos</key>
+			<integer>50</integer>
+		</dict>
+		<key>open</key>
+		<dict>
+			<key>xpos</key>
+			<integer>780</integer>
+			<key>ypos</key>
+			<integer>50</integer>
+		</dict>
+		<key>save-query</key>
+		<dict>
+			<key>xpos</key>
+			<integer>260</integer>
+			<key>ypos</key>
+			<integer>50</integer>
+		</dict>
+	</dict>
+	<key>version</key>
+	<string>1.0.0</string>
+	<key>webaddress</key>
+	<string>https://www.ninjakitty.net</string>
+</dict>
+</plist>
