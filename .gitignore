@@ -5,3 +5,6 @@
 **/dist/
 
 pad/workflow/.scratchpad/
+
+# Local source artwork; native workflow images are tracked separately.
+/google-search-menu/icons/

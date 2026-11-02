@@ -8,3 +8,5 @@ Alfred workflows by **Yuri Parsons** — [ninjakitty.net](https://www.ninjakitty
 - [Pad](pad/README.md): floating note with Alfred controls.
 
 - [Copy Directory Path](copy-directory-path/README.md): copy the current Finder or iTerm2 directory to the clipboard.
+
+- [Google Search Menu](google-search-menu/README.md): choose Google, Reddit, or FTL searches in a new Chrome window.
