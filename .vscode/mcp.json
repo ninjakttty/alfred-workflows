@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "alfred": {
+      "command": "/Users/yuri/projects/ai/alfred-mcp/.venv/bin/python",
+      "args": [
+        "/Users/yuri/projects/ai/alfred-mcp/server.py"
+      ]
+    }
+  }
+}
