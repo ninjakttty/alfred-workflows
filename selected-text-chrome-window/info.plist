@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>net.ninjakitty.selected-text-chrome-window</string>
+	<key>category</key>
+	<string>Internet</string>
+	<key>connections</key>
+	<dict>
+		<key>selection-hotkey</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>open-in-chrome</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Yuri Parsons</string>
+	<key>description</key>
+	<string>Open selected text in a new normal Google Chrome window via hotkey.</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Selected Text Chrome Window</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>action</key>
+				<integer>0</integer>
+				<key>argument</key>
+				<integer>1</integer>
+				<key>focusedappvariable</key>
+				<false/>
+				<key>focusedappvariablename</key>
+				<string></string>
+				<key>hotkey</key>
+				<integer>31</integer>
+				<key>hotmod</key>
+				<integer>1966080</integer>
+				<key>hotstring</key>
+				<string>O</string>
+				<key>leftcursor</key>
+				<false/>
+				<key>modsmode</key>
+				<integer>0</integer>
+				<key>relatedAppsMode</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.hotkey</string>
+			<key>uid</key>
+			<string>selection-hotkey</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>exec /usr/bin/osascript open-selected-text.applescript "$1"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>5</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>open-in-chrome</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string># Selected Text Chrome Window
+
+Press Hyper+O (`⌃⌥⇧⌘O`) while text is selected in macOS to open that text in a new normal Google Chrome window.
+
+This workflow uses an Alfred Hotkey trigger configured to pass selected macOS text into an AppleScript action. If the selected text does not include a URL scheme, the workflow prepends `https://`.
+
+Requires Alfred 5 with Powerpack and Google Chrome. macOS may request permission for Alfred to read selected text and control Chrome.
+
+Author: Yuri Parsons • https://www.ninjakitty.net
+</string>
+	<key>uidata</key>
+	<dict>
+		<key>open-in-chrome</key>
+		<dict>
+			<key>xpos</key>
+			<integer>320</integer>
+			<key>ypos</key>
+			<integer>50</integer>
+		</dict>
+		<key>selection-hotkey</key>
+		<dict>
+			<key>xpos</key>
+			<integer>20</integer>
+			<key>ypos</key>
+			<integer>50</integer>
+		</dict>
+	</dict>
+	<key>version</key>
+	<string>1.0.0</string>
+	<key>webaddress</key>
+	<string>https://www.ninjakitty.net</string>
+</dict>
+</plist>
