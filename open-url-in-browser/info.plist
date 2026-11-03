@@ -53,7 +53,7 @@
 				<key>argumenttype</key>
 				<integer>2</integer>
 				<key>keyword</key>
-				<string>ou</string>
+				<string>url</string>
 				<key>subtext</key>
 				<string>Open currently selected text in a new Chrome window</string>
 				<key>text</key>
@@ -126,7 +126,7 @@
 	<key>readme</key>
 	<string># Open URL in Browser
 
-Use Alfred keyword `ou` or press Hyper+O (`⌃⌥⇧⌘O`) while text is selected in macOS to open the selected text as a URL in a new normal Google Chrome window.
+Use Alfred keyword `url` or press Hyper+O (`⌃⌥⇧⌘O`) while text is selected in macOS to open the selected text as a URL in a new normal Google Chrome window.
 
 This workflow has both an Alfred keyword trigger and an Alfred Hotkey trigger that pass selected macOS text into an AppleScript action. If the input text does not include a URL scheme, the workflow prepends `https://`.
 
