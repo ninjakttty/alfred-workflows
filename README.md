@@ -10,4 +10,4 @@ Alfred workflows by **Yuri Parsons** — [ninjakitty.net](https://www.ninjakitty
 - [Copy Directory Path](copy-directory-path/README.md): copy the current Finder or iTerm2 directory to the clipboard.
 
 - [Google Search Menu](google-search-menu/README.md): choose Google, Reddit, or FTL searches in a new Chrome window.
-- [Selected Text Chrome Window](selected-text-chrome-window/README.md): open selected text as a URL in a new Chrome window from a hotkey.
+- [Open URL in Browser](open-url-in-browser/README.md): open a URL in a new Chrome window from Alfred keyword or selected text hotkey.

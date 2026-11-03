@@ -3,11 +3,24 @@
 <plist version="1.0">
 <dict>
 	<key>bundleid</key>
-	<string>net.ninjakitty.selected-text-chrome-window</string>
+	<string>net.ninjakitty.open-url-in-browser</string>
 	<key>category</key>
 	<string>Internet</string>
 	<key>connections</key>
 	<dict>
+		<key>manual-keyword</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>open-in-chrome</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>selection-hotkey</key>
 		<array>
 			<dict>
@@ -25,13 +38,34 @@
 	<key>createdby</key>
 	<string>Yuri Parsons</string>
 	<key>description</key>
-	<string>Open selected text in a new normal Google Chrome window via hotkey.</string>
+	<string>Open a URL in a new normal Google Chrome window from Alfred or selected text.</string>
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
-	<string>Selected Text Chrome Window</string>
+	<string>Open URL in Browser</string>
 	<key>objects</key>
 	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>keyword</key>
+				<string>ou</string>
+				<key>subtext</key>
+				<string>Type or paste a URL to open in a new Chrome window</string>
+				<key>text</key>
+				<string>Open URL in Browser</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>manual-keyword</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
@@ -88,11 +122,11 @@
 		</dict>
 	</array>
 	<key>readme</key>
-	<string># Selected Text Chrome Window
+	<string># Open URL in Browser
 
-Press Hyper+O (`⌃⌥⇧⌘O`) while text is selected in macOS to open that text in a new normal Google Chrome window.
+Use Alfred keyword `ou` to type or paste a URL, or press Hyper+O (`⌃⌥⇧⌘O`) while text is selected in macOS, to open the URL in a new normal Google Chrome window.
 
-This workflow uses an Alfred Hotkey trigger configured to pass selected macOS text into an AppleScript action. If the selected text does not include a URL scheme, the workflow prepends `https://`.
+This workflow has both an Alfred keyword trigger and an Alfred Hotkey trigger that pass text into an AppleScript action. If the input text does not include a URL scheme, the workflow prepends `https://`.
 
 Requires Alfred 5 with Powerpack and Google Chrome. macOS may request permission for Alfred to read selected text and control Chrome.
 
@@ -100,12 +134,19 @@ Author: Yuri Parsons • https://www.ninjakitty.net
 </string>
 	<key>uidata</key>
 	<dict>
+		<key>manual-keyword</key>
+		<dict>
+			<key>xpos</key>
+			<integer>20</integer>
+			<key>ypos</key>
+			<integer>150</integer>
+		</dict>
 		<key>open-in-chrome</key>
 		<dict>
 			<key>xpos</key>
 			<integer>320</integer>
 			<key>ypos</key>
-			<integer>50</integer>
+			<integer>100</integer>
 		</dict>
 		<key>selection-hotkey</key>
 		<dict>
