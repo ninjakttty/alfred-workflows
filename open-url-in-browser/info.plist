@@ -48,16 +48,18 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>argument</key>
+				<integer>1</integer>
 				<key>argumenttype</key>
-				<integer>0</integer>
+				<integer>2</integer>
 				<key>keyword</key>
 				<string>ou</string>
 				<key>subtext</key>
-				<string>Type or paste a URL to open in a new Chrome window</string>
+				<string>Open currently selected text in a new Chrome window</string>
 				<key>text</key>
 				<string>Open URL in Browser</string>
 				<key>withspace</key>
-				<true/>
+				<false/>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.input.keyword</string>
@@ -124,9 +126,9 @@
 	<key>readme</key>
 	<string># Open URL in Browser
 
-Use Alfred keyword `ou` to type or paste a URL, or press Hyper+O (`⌃⌥⇧⌘O`) while text is selected in macOS, to open the URL in a new normal Google Chrome window.
+Use Alfred keyword `ou` or press Hyper+O (`⌃⌥⇧⌘O`) while text is selected in macOS to open the selected text as a URL in a new normal Google Chrome window.
 
-This workflow has both an Alfred keyword trigger and an Alfred Hotkey trigger that pass text into an AppleScript action. If the input text does not include a URL scheme, the workflow prepends `https://`.
+This workflow has both an Alfred keyword trigger and an Alfred Hotkey trigger that pass selected macOS text into an AppleScript action. If the input text does not include a URL scheme, the workflow prepends `https://`.
 
 Requires Alfred 5 with Powerpack and Google Chrome. macOS may request permission for Alfred to read selected text and control Chrome.
 

@@ -1,9 +1,9 @@
 # Open URL in Browser
 
-Use Alfred keyword **ou** (type/paste a URL) or press **Hyper+O** (`⌃⌥⇧⌘O`) while text is selected in macOS to open the URL in a **new normal Google Chrome window**.
+Use Alfred keyword **ou** or press **Hyper+O** (`⌃⌥⇧⌘O`) while text is selected in macOS to open the selected text as a URL in a **new normal Google Chrome window**.
 
 - Uses both an Alfred **Keyword** trigger and an Alfred **Hotkey** trigger.
-- The keyword passes your typed query; the hotkey passes current selected text from macOS.
+- Both triggers pass current selected text from macOS.
 - If the selected text has no URL scheme, the workflow prepends `https://`.
 
 ## Requirements
@@ -14,7 +14,7 @@ Use Alfred keyword **ou** (type/paste a URL) or press **Hyper+O** (`⌃⌥⇧⌘
 
 ## Notes
 
-- The keyword is `ou` and expects a URL/domain (for example `example.com` or `https://example.com/path`).
+- The keyword is `ou` and uses the currently selected URL/domain text (for example `example.com` or `https://example.com/path`).
 - The default hotkey is Hyper+O. Change it in Alfred if you prefer another key.
 
 Author: Yuri Parsons • https://www.ninjakitty.net
