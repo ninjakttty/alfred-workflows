@@ -4,7 +4,7 @@ try
         set folderPath to POSIX path of (target of front Finder window as alias)
     end tell
     set cdCommand to "cd -- " & quoted form of folderPath
-    tell application "iTerm2"
+    tell application id "com.googlecode.iterm2"
         if (count of windows) is 0 then
             set destinationWindow to create window with default profile
             set destinationSession to current session of destinationWindow

@@ -11,6 +11,11 @@ For every Alfred workflow created or updated for this user:
 
 Apply these defaults across projects and chats unless the user explicitly requests otherwise.
 
+## Tooling and branch workflow
+
+- Prefer MCP tools whenever possible.
+- Create a feature branch whenever starting work.
+
 ## Verification before commits
 
 Before committing changes, test that the affected functionality actually works. Use appropriate automated checks and verify integration in the real application when applicable. For Alfred workflows, verify that Alfred accepts and loads the workflow and exercise changed user actions; standalone program output or mocked APIs alone are insufficient. Fix failures before committing. If an essential check cannot be performed, explain the limitation and do not claim the feature is verified or commit it without the user's explicit agreement.

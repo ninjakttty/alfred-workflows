@@ -1,8 +1,9 @@
 try
-    if not application "iTerm2" is running then error "Open an iTerm tab first."
-    tell application "iTerm2"
-        if (count of windows) is 0 then error "Open an iTerm tab first."
-        tell current session of current window
+    if not application id "com.googlecode.iterm2" is running then error "iTerm is not running. Use cdi first to open iTerm."
+    tell application id "com.googlecode.iterm2"
+        if (count of windows) is 0 then error "No iTerm window is open. Use cdi first to open one."
+        set destinationSession to current session of current window
+        tell destinationSession
             set folderPath to variable named "path"
         end tell
     end tell

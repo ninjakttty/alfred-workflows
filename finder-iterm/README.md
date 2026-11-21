@@ -2,7 +2,7 @@
 
 ![Workflow icon](icon.png)
 
-- `cdf` (cd in Finder): open the selected session in the current iTerm window in a new Finder window.
+- `cdf` (cd in Finder): open the selected session in the current iTerm window in a new Finder window. If iTerm is closed (or has no windows), Alfred suggests `cdi` instead.
 - `cdi` (cd in iTerm): open the front Finder window's folder in a new iTerm tab. If no iTerm window exists, create one.
 
 No arguments are needed. With split panes, `cdf` uses the active pane. `cdi` uses the Finder window's folder, not a selected item. Virtual Finder locations such as Recents are not ordinary folders.

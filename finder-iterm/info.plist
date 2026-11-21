@@ -74,23 +74,49 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>alfredfiltersresults</key>
+				<true/>
+				<key>argumenttreatemptyqueryasnil</key>
+				<true/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
 				<key>argumenttype</key>
 				<integer>2</integer>
+				<key>escaping</key>
+				<integer>102</integer>
 				<key>keyword</key>
 				<string>cdf</string>
+				<key>queuedelaycustom</key>
+				<integer>0</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>1</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runmodemode</key>
+				<integer>0</integer>
+				<key>script</key>
+				<string>/usr/bin/python3 cdf-check.py "{query}"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
 				<key>subtext</key>
-				<string>New Finder window</string>
-				<key>text</key>
-				<string>Open iTerm directory in Finder</string>
+				<string>Open the active iTerm tab in Finder</string>
+				<key>title</key>
+				<string>Finder iTerm</string>
+				<key>type</key>
+				<integer>5</integer>
 				<key>withspace</key>
 				<false/>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.input.keyword</string>
+			<string>alfred.workflow.input.scriptfilter</string>
 			<key>uid</key>
 			<string>cdf-keyword</string>
 			<key>version</key>
-			<integer>1</integer>
+			<integer>3</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -100,7 +126,7 @@
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>/usr/bin/osascript cdf.applescript</string>
+				<string>/bin/bash -lc 'if [ "$1" = "cdi" ]; then /usr/bin/osascript cdi.applescript; else /usr/bin/osascript cdf.applescript; fi' -- "$1"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -203,7 +229,7 @@
 
 ![Workflow icon](icon.png)
 
-- `cdf` (cd in Finder): open the selected session in the current iTerm window in a new Finder window.
+- `cdf` (cd in Finder): open the selected session in the current iTerm window in a new Finder window. If iTerm is closed (or has no windows), Alfred suggests `cdi` instead.
 - `cdi` (cd in iTerm): open the front Finder window's folder in a new iTerm tab. If no iTerm window exists, create one.
 
 No arguments are needed. With split panes, `cdf` uses the active pane. `cdi` uses the Finder window's folder, not a selected item. Virtual Finder locations such as Recents are not ordinary folders.
