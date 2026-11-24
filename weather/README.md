@@ -1,6 +1,16 @@
 # Weather
 
-A native AlfredUI forecast inside Alfred, with a grouped main summary and hourly forecast cards and a compact three-day list. Requires Alfred 6 with Powerpack, Python 3, and macOS's built-in curl. No API key, compiled app, or third-party Python package is needed.
+A native AlfredUI forecast inside Alfred, with a grouped main summary, hourly forecast cards, and a compact three-day list. Requires Alfred 6 with Powerpack, Python 3, and macOS's built-in curl. No API key, compiled app, or third-party Python package is needed.
+
+## Screenshots
+
+### Forecast
+
+![Weather forecast with a four-hour summary, hourly cards, and compact three-day list](screenshots/forecast.jpg)
+
+### Settings
+
+![Weather settings for location and Celsius or Fahrenheit](screenshots/settings.jpg)
 
 ## Use
 

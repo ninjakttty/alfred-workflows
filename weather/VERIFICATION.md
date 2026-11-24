@@ -45,3 +45,7 @@ Installed and visually checked both views in Alfred. Exercised an invalid locati
 ## Compact daily list — 24 November 2026
 
 Replaced the daily forecast cards with three compact, aligned rows in one rounded panel. Each row retains day/date, conditions, feels-like high/low, and rain probability. The main and hourly cards are unchanged. Rebuilt and installed; visually verified the compact list in Alfred. All twelve tests pass.
+
+## README screenshots — 24 November 2026
+
+Captured the real installed Alfred forecast and settings views and added both screenshots to the README. All twelve tests and the whitespace check passed before merging. Keyboard shortcuts remain deferred.
