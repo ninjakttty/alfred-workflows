@@ -14,7 +14,8 @@ from urllib.parse import urlencode
 DATA = Path(os.environ.get('alfred_workflow_data') or Path.home() / 'Library/Application Support/Alfred/Workflow Data/net.ninjakitty.weather')
 SETTINGS = DATA / 'settings.json'
 CACHE = Path(os.environ.get('alfred_workflow_cache') or Path.home() / 'Library/Caches/com.runningwithcrayons.Alfred/Workflow Data/net.ninjakitty.weather')
-CONTROLS = ('city', 'use-city', 'automatic', 'refresh')
+CONTROLS = ('refresh', 'settings')
+CONFIG_CONTROLS = ('city', 'use-city', 'automatic', 'temperature-unit', 'apply-settings')
 
 
 def fetch(url):
@@ -143,7 +144,14 @@ def label(text, size=13, **extra):
     return {'type': 'label', 'text': text, 'font': {'size': size}, **extra}
 
 
-def render(data):
+def render(data, unit='fahrenheit'):
+    unit_symbol = '°C' if unit == 'celsius' else '°F'
+
+    def temperature(value, suffix='°'):
+        if value is not None and unit == 'celsius':
+            value = (value - 32) * 5 / 9
+        return number(value, suffix)
+
     current, hourly, daily = data['current'], data['hourly'], data['daily']
     now = datetime.fromisoformat(current['time'])
     # API times are local to the forecast, independent of the Mac's timezone.
@@ -163,32 +171,63 @@ def render(data):
         span = start.strftime('%-I%p') if len(block) == 1 else start.strftime('%-I%p') + '–' + end.strftime('%-I%p')
         tooltip = start.strftime('%a %-d %b, %-I %p') + ' to ' + end.strftime('%a %-d %b, %-I %p') + ' · ' + name
         blocks.append({'span': span, 'tooltip': tooltip, 'symbol': symbol, 'temperature': min(temperatures) if temperatures else None, 'rain': max(rain) if rain else None})
-        hours.append({'type': 'view', 'layout': 'inline', 'direction': 'vertical', 'spacing': 5, 'padding': 8, 'components': [label(span, 11, tooltip=tooltip), label(symbol + ' ' + number(min(temperatures) if temperatures else None, '°'), 17, tooltip='Lowest feels-like temperature · ' + tooltip), label(number(max(rain) if rain else None, '% rain'), tooltip='Highest hourly rain probability')]})
+        hours.append({'type': 'view', 'layout': 'inline', 'direction': 'vertical', 'spacing': 5, 'padding': 8, 'components': [label(span, 11, tooltip=tooltip), label(symbol + ' ' + temperature(min(temperatures) if temperatures else None), 17, tooltip='Lowest feels-like temperature · ' + tooltip), label(number(max(rain) if rain else None, '% rain'), tooltip='Highest hourly rain probability')]})
     first = blocks[0] if blocks else {'span': 'Unavailable', 'tooltip': '', 'symbol': '🌡️', 'temperature': None, 'rain': None}
     days = [label('Day'), label('Conditions'), label('High / Low'), label('Rain')]
     for i, date in enumerate(daily['time'][:3]):
         symbol, name = condition(daily['weather_code'][i])
-        days.extend([label('Today' if i == 0 else datetime.fromisoformat(date).strftime('%a, %b %-d')), label(symbol + ' ' + name), label(number(daily['apparent_temperature_max'][i], '°') + ' / ' + number(daily['apparent_temperature_min'][i], '°')), label(number(daily['precipitation_probability_max'][i], '%'))])
+        days.extend([label('Today' if i == 0 else datetime.fromisoformat(date).strftime('%a, %b %-d')), label(symbol + ' ' + name), label(temperature(daily['apparent_temperature_max'][i]) + ' / ' + temperature(daily['apparent_temperature_min'][i])), label(number(daily['precipitation_probability_max'][i], '%'))])
     return {
         'summary-heading': {'text': first['span'], 'tooltip': first['tooltip']},
-        'summary': {'text': f'{first["symbol"]}  {number(first["temperature"], "°F")}'},
+        'summary': {'text': f'{first["symbol"]}  {temperature(first["temperature"], unit_symbol)}'},
         'details': {'text': f'Max rain {number(first["rain"], "%")}'},
         'hourly': {'components': hours[1:]},
         'daily': {'components': days},
-        'updated': {'text': f'As of {now.strftime("%-I:%M %p")} · {data["timezone"]} · All temperatures feel like °F'},
     }
+
+
+def configuration(config):
+    location_controls = json.loads((Path(__file__).resolve().parents[1] / 'components/location-settings.json').read_text())
+    location_controls[0]['text'] = 'Approximate location from IP' if config['automatic'] else 'Saved location'
+    location_controls[1]['components'][0]['text'] = config['city']
+    return {'sheet': {'id': 'weather-settings', 'root': {
+        'type': 'view', 'layout': 'inline', 'direction': 'vertical',
+        'padding': 20, 'spacing': 12, 'components': [
+            label('Weather settings', 20),
+            *location_controls,
+            label('Temperature'),
+            {'id': 'temperature-unit', 'type': 'picker', 'selected': config.get('unit', 'fahrenheit'),
+             'items': [{'text': 'Celsius (°C)', 'value': 'celsius'}, {'text': 'Fahrenheit (°F)', 'value': 'fahrenheit'}]},
+            label('Forecast by Open-Meteo · Location by ipapi', 12),
+            {'id': 'settings-error', 'type': 'label', 'text': '', 'hidden': True, 'colour': 'systemRedColor'},
+            {'type': 'view', 'layout': 'inline', 'spacing': 8, 'components': [
+                {'type': 'button', 'text': 'Cancel', 'events': [{'triggers': 'actioned', 'action': {'type': 'json', 'src': {'sheet': {'close': 'weather-settings'}}}}]},
+                {'id': 'apply-settings', 'type': 'button', 'text': 'Apply', 'events': [{'triggers': 'actioned', 'action': [
+                    {'type': 'json', 'src': {'update': {'ids': {'apply-settings': {'enabled': False}}}}},
+                    {'type': 'script', 'src': 'scripts/weather.py', 'args': ['unit', '{value:temperature-unit.selected.value}'], 'async': True},
+                ]}]},
+            ]},
+        ],
+    }}}
 
 
 def run(command, city=''):
     config = settings()
-    if command == 'city':
+    if command == 'config':
+        return configuration(config)
+    if command == 'unit':
+        if city not in ('celsius', 'fahrenheit'):
+            raise ValueError('Choose Celsius or Fahrenheit')
+        config['unit'] = city
+        place, mode = location(config)
+    elif command == 'city':
         city = city.strip()
         if not city:
             raise ValueError('Enter a city first.')
         # Resolve and fetch before saving so a bad search preserves working settings.
         place = geocode(city)
         mode = 'Saved location'
-        config = {'automatic': False, 'city': city}
+        config = {**config, 'automatic': False, 'city': city}
     elif command in ('load', 'refresh', 'automatic'):
         if command == 'automatic':
             config['automatic'] = True
@@ -196,12 +235,18 @@ def run(command, city=''):
     else:
         raise ValueError('Unknown weather action')
     data = forecast(place, force=command in ('refresh', 'automatic'))
-    ids = render(data)
-    if command in ('city', 'automatic'):
+    ids = render(data, config.get('unit', 'fahrenheit'))
+    if command in ('city', 'automatic', 'unit'):
         save_settings(config)
     ids.update({name: {'enabled': True} for name in CONTROLS})
-    ids.update({'location': {'text': place['name']}, 'mode': {'text': mode}, 'city': {'text': config['city'], 'enabled': True}, 'status': {'text': '', 'hidden': True}})
-    return {'update': {'ids': ids, 'relayout': True}, 'window': {'resize': {'height': 'auto'}}}
+    ids.update({'location': {'text': place['name']}, 'status': {'text': '', 'hidden': True}})
+    if command in ('city', 'automatic', 'unit'):
+        ids.update({name: {'enabled': True} for name in CONFIG_CONTROLS})
+        ids.update({'mode': {'text': mode}, 'city': {'text': config['city'], 'enabled': True}, 'settings-error': {'text': '', 'hidden': True}})
+    result = {'update': {'ids': ids, 'relayout': True}, 'window': {'resize': {'height': 'auto'}}}
+    if command == 'unit':
+        result['sheet'] = {'close': 'weather-settings'}
+    return result
 
 
 if __name__ == '__main__':
@@ -211,6 +256,9 @@ if __name__ == '__main__':
         print('Weather: ' + str(error), file=sys.stderr)
         ids = {name: {'enabled': True} for name in CONTROLS}
         ids['status'] = {'text': 'Could not load weather: ' + str(error), 'hidden': False, 'colour': 'systemRedColor'}
+        if sys.argv[1] in ('city', 'automatic', 'unit'):
+            ids.update({name: {'enabled': True} for name in CONFIG_CONTROLS})
+            ids['settings-error'] = {'text': str(error), 'hidden': False, 'colour': 'systemRedColor'}
         result = {'update': {'ids': ids, 'relayout': True}}
     # Alfred UI needs a successful script exit to process error-display JSON too.
     print(json.dumps(result, ensure_ascii=False))

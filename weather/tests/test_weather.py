@@ -67,7 +67,6 @@ class WeatherTests(unittest.TestCase):
         self.assertEqual(len(result['hourly']['components']), 0)
         self.assertEqual(result['daily']['components'][6]['text'], '46° / 35°')
         self.assertEqual(len(result['daily']['components']), 8)
-        self.assertIn('Europe/Dublin', result['updated']['text'])
 
     def test_fresh_cache_avoids_network_and_expiry_fetches_again(self):
         with patch.object(weather, 'fetch', return_value={'value': 1}) as fetch, patch.object(weather.time, 'time', return_value=1000):
@@ -127,3 +126,29 @@ class WeatherTests(unittest.TestCase):
         empty = weather.render(data)['hourly']['components'][0]['components']
         self.assertIn('—', empty[1]['text'])
         self.assertEqual(empty[2]['text'], '—')
+
+    def test_celsius_converts_summary_blocks_and_daily_values(self):
+        from datetime import datetime, timedelta
+        start = datetime(2026, 11, 24, 10)
+        data = {
+            'current': {'time': start.isoformat()},
+            'hourly': {'time': [(start + timedelta(hours=i)).isoformat() for i in range(16)], 'apparent_temperature': [32] * 16, 'precipitation_probability': [20] * 16, 'weather_code': [3] * 16, 'is_day': [1] * 16},
+            'daily': {'time': ['2026-11-24'], 'weather_code': [3], 'apparent_temperature_max': [50], 'apparent_temperature_min': [14], 'precipitation_probability_max': [20]},
+            'timezone': 'Europe/Dublin',
+        }
+        result = weather.render(data, 'celsius')
+        self.assertEqual(result['summary']['text'], '☁️  0°C')
+        self.assertEqual(result['hourly']['components'][0]['components'][1]['text'], '☁️ 0°')
+        self.assertEqual(result['daily']['components'][6]['text'], '10° / -10°')
+        self.assertEqual(data['hourly']['apparent_temperature'][0], 32)
+
+    def test_unit_change_persists_and_preserves_location(self):
+        with patch.object(weather, 'SETTINGS', weather.DATA / 'settings.json'):
+            weather.save_settings({'automatic': False, 'city': 'Stillorgan, Ireland'})
+            with patch.object(weather, 'location', return_value=({'name': 'Stillorgan'}, 'Saved location')), patch.object(weather, 'forecast', return_value={}), patch.object(weather, 'render', return_value={}):
+                result = weather.run('unit', 'celsius')
+            self.assertEqual(weather.settings(), {'automatic': False, 'city': 'Stillorgan, Ireland', 'unit': 'celsius'})
+            self.assertEqual(result['sheet']['close'], 'weather-settings')
+            with self.assertRaises(ValueError):
+                weather.run('unit', 'kelvin')
+            self.assertEqual(weather.settings()['unit'], 'celsius')

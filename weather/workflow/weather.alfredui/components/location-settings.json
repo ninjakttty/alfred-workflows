@@ -1,0 +1,152 @@
+[
+  {
+    "id": "mode",
+    "type": "label",
+    "text": "Approximate current location or your saved city",
+    "font": {
+      "size": 13
+    }
+  },
+  {
+    "type": "view",
+    "layout": "inline",
+    "spacing": 8,
+    "components": [
+      {
+        "id": "city",
+        "type": "textfield",
+        "text": "Dublin, Ireland",
+        "placeholder": "City, country",
+        "constraints": {
+          "size": {
+            "width": 220
+          }
+        },
+        "accessibility": {
+          "label": "Saved city"
+        }
+      },
+      {
+        "id": "use-city",
+        "type": "button",
+        "text": "Use city",
+        "events": [
+          {
+            "triggers": "actioned",
+            "action": [
+              {
+                "type": "json",
+                "src": {
+                  "update": {
+                    "ids": {
+                      "city": {
+                        "enabled": false
+                      },
+                      "use-city": {
+                        "enabled": false
+                      },
+                      "automatic": {
+                        "enabled": false
+                      },
+                      "refresh": {
+                        "enabled": false
+                      },
+                      "status": {
+                        "text": "Loading weather…",
+                        "hidden": false,
+                        "colour": "secondaryLabelColor"
+                      },
+                      "settings": {
+                        "enabled": false
+                      },
+                      "temperature-unit": {
+                        "enabled": false
+                      },
+                      "apply-settings": {
+                        "enabled": false
+                      },
+                      "settings-error": {
+                        "text": "Loading weather…",
+                        "hidden": false,
+                        "colour": "secondaryLabelColor"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "script",
+                "src": "scripts/weather.py",
+                "args": [
+                  "city",
+                  "{value:city.text}"
+                ],
+                "async": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "automatic",
+        "type": "button",
+        "text": "Current area",
+        "events": [
+          {
+            "triggers": "actioned",
+            "action": [
+              {
+                "type": "json",
+                "src": {
+                  "update": {
+                    "ids": {
+                      "city": {
+                        "enabled": false
+                      },
+                      "use-city": {
+                        "enabled": false
+                      },
+                      "automatic": {
+                        "enabled": false
+                      },
+                      "refresh": {
+                        "enabled": false
+                      },
+                      "status": {
+                        "text": "Loading weather…",
+                        "hidden": false,
+                        "colour": "secondaryLabelColor"
+                      },
+                      "settings": {
+                        "enabled": false
+                      },
+                      "temperature-unit": {
+                        "enabled": false
+                      },
+                      "apply-settings": {
+                        "enabled": false
+                      },
+                      "settings-error": {
+                        "text": "Loading weather…",
+                        "hidden": false,
+                        "colour": "secondaryLabelColor"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "script",
+                "src": "scripts/weather.py",
+                "args": [
+                  "automatic"
+                ],
+                "async": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

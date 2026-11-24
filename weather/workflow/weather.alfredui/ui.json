@@ -18,15 +18,6 @@
               "src": {
                 "update": {
                   "ids": {
-                    "city": {
-                      "enabled": false
-                    },
-                    "use-city": {
-                      "enabled": false
-                    },
-                    "automatic": {
-                      "enabled": false
-                    },
                     "refresh": {
                       "enabled": false
                     },
@@ -34,6 +25,9 @@
                       "text": "Loading weather…",
                       "hidden": false,
                       "colour": "secondaryLabelColor"
+                    },
+                    "settings": {
+                      "enabled": false
                     }
                   }
                 }
@@ -141,141 +135,10 @@
           }
         },
         {
-          "id": "updated",
-          "type": "label",
-          "text": "",
-          "font": {
-            "size": 13
-          }
-        },
-        {
-          "id": "credit",
-          "type": "label",
-          "text": "Forecast by Open-Meteo · Location by ipapi",
-          "font": {
-            "size": 13
-          }
-        },
-        {
-          "id": "mode",
-          "type": "label",
-          "text": "Approximate current location or your saved city",
-          "font": {
-            "size": 13
-          }
-        },
-        {
           "type": "view",
-          "layout": "inline",
+          "layout": "border",
           "spacing": 8,
           "components": [
-            {
-              "id": "city",
-              "type": "textfield",
-              "text": "Dublin, Ireland",
-              "placeholder": "City, country",
-              "constraints": {
-                "size": {
-                  "width": 220
-                }
-              },
-              "accessibility": {
-                "label": "Saved city"
-              }
-            },
-            {
-              "id": "use-city",
-              "type": "button",
-              "text": "Use city",
-              "events": [
-                {
-                  "triggers": "actioned",
-                  "action": [
-                    {
-                      "type": "json",
-                      "src": {
-                        "update": {
-                          "ids": {
-                            "city": {
-                              "enabled": false
-                            },
-                            "use-city": {
-                              "enabled": false
-                            },
-                            "automatic": {
-                              "enabled": false
-                            },
-                            "refresh": {
-                              "enabled": false
-                            },
-                            "status": {
-                              "text": "Loading weather…",
-                              "hidden": false,
-                              "colour": "secondaryLabelColor"
-                            }
-                          }
-                        }
-                      }
-                    },
-                    {
-                      "type": "script",
-                      "src": "scripts/weather.py",
-                      "args": [
-                        "city",
-                        "{value:city.text}"
-                      ],
-                      "async": true
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "id": "automatic",
-              "type": "button",
-              "text": "Current area",
-              "events": [
-                {
-                  "triggers": "actioned",
-                  "action": [
-                    {
-                      "type": "json",
-                      "src": {
-                        "update": {
-                          "ids": {
-                            "city": {
-                              "enabled": false
-                            },
-                            "use-city": {
-                              "enabled": false
-                            },
-                            "automatic": {
-                              "enabled": false
-                            },
-                            "refresh": {
-                              "enabled": false
-                            },
-                            "status": {
-                              "text": "Loading weather…",
-                              "hidden": false,
-                              "colour": "secondaryLabelColor"
-                            }
-                          }
-                        }
-                      }
-                    },
-                    {
-                      "type": "script",
-                      "src": "scripts/weather.py",
-                      "args": [
-                        "automatic"
-                      ],
-                      "async": true
-                    }
-                  ]
-                }
-              ]
-            },
             {
               "id": "refresh",
               "type": "button",
@@ -289,15 +152,6 @@
                       "src": {
                         "update": {
                           "ids": {
-                            "city": {
-                              "enabled": false
-                            },
-                            "use-city": {
-                              "enabled": false
-                            },
-                            "automatic": {
-                              "enabled": false
-                            },
                             "refresh": {
                               "enabled": false
                             },
@@ -305,6 +159,9 @@
                               "text": "Loading weather…",
                               "hidden": false,
                               "colour": "secondaryLabelColor"
+                            },
+                            "settings": {
+                              "enabled": false
                             }
                           }
                         }
@@ -320,7 +177,39 @@
                     }
                   ]
                 }
-              ]
+              ],
+              "constraints": {
+                "region": "left"
+              }
+            },
+            {
+              "id": "settings",
+              "type": "button",
+              "text": "",
+              "bordered": false,
+              "image": {
+                "type": "symbol",
+                "src": "gearshape"
+              },
+              "tooltip": "Weather settings",
+              "accessibility": {
+                "label": "Settings"
+              },
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "script",
+                    "src": "scripts/weather.py",
+                    "args": [
+                      "config"
+                    ]
+                  }
+                }
+              ],
+              "constraints": {
+                "region": "right"
+              }
             }
           ]
         }
