@@ -8,6 +8,7 @@ For every Alfred workflow created or updated for this user:
 - Set the website (`webaddress`) to `https://www.ninjakitty.net`.
 - Name standalone workflow GitHub repositories using lowercase `alfred-<workflow-name>`. Inside the shared `alfred-workflows` repository, omit the redundant `alfred-` prefix from workflow folders and exported files (for example, `finder-iterm/` and `finder-iterm.alfredworkflow`).
 - Include an appropriate workflow icon in the workflow and its installable export.
+- When a workflow is complete, capture screenshots of the finished workflow in Alfred and add or update its screenshots in the main repository README before pushing. Store images in the workflow's `screenshots/` folder. Include relevant settings or secondary views when applicable, and keep screenshots current when the UI changes. Do not add extra descriptive text unless requested.
 
 Apply these defaults across projects and chats unless the user explicitly requests otherwise.
 
