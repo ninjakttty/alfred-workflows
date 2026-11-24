@@ -1,0 +1,153 @@
+{
+  "bundleid": "net.ninjakitty.pad",
+  "iconpath": "../icon.png",
+  "pulse": {
+    "src": "scripts/note.py",
+    "args": [
+      "poll"
+    ],
+    "interval": 0.25
+  },
+  "window": {
+    "id": "pad-window",
+    "title": "Pad",
+    "size": {
+      "width": 420,
+      "height": 320
+    },
+    "minsize": {
+      "width": 240,
+      "height": 160
+    },
+    "level": 3,
+    "frameautosave": true,
+    "minimisable": false,
+    "fullscreenable": false,
+    "root": {
+      "type": "view",
+      "layout": "border",
+      "events": [
+        {
+          "triggers": "preload",
+          "action": {
+            "type": "script",
+            "src": "scripts/note.py",
+            "args": [
+              "load"
+            ]
+          }
+        }
+      ],
+      "shortcuts": [
+        {
+          "shortcut": "\u238b",
+          "action": {
+            "type": "script",
+            "src": "scripts/note.py",
+            "args": [
+              "close",
+              "{value:editor.text}",
+              "{var:loaded}"
+            ]
+          }
+        },
+        {
+          "shortcut": "\u2318W",
+          "action": {
+            "type": "script",
+            "src": "scripts/note.py",
+            "args": [
+              "close",
+              "{value:editor.text}",
+              "{var:loaded}"
+            ]
+          }
+        }
+      ],
+      "components": [
+        {
+          "id": "editor",
+          "type": "textarea",
+          "constraints": {
+            "region": "centre"
+          },
+          "editable": false,
+          "selectable": true,
+          "focus": true,
+          "font": {
+            "monospaced": true,
+            "size": 14
+          },
+          "textinsets": {
+            "horizontal": 12,
+            "vertical": 12
+          },
+          "disableallsubstitutions": true,
+          "accessibility": {
+            "label": "Note"
+          },
+          "events": [
+            {
+              "triggers": "changed",
+              "action": {
+                "type": "script",
+                "src": "scripts/note.py",
+                "args": [
+                  "save",
+                  "{value:self.text}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "view",
+          "layout": "border",
+          "padding": 8,
+          "constraints": {
+            "region": "bottom"
+          },
+          "components": [
+            {
+              "id": "status",
+              "type": "label",
+              "text": "",
+              "constraints": {
+                "region": "centre"
+              },
+              "hidden": true
+            },
+            {
+              "id": "close-button",
+              "type": "button",
+              "text": "Close",
+              "constraints": {
+                "region": "right"
+              },
+              "events": [
+                {
+                  "triggers": "actioned",
+                  "action": {
+                    "type": "script",
+                    "src": "scripts/note.py",
+                    "args": [
+                      "close",
+                      "{value:editor.text}",
+                      "{var:loaded}"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "closeable": false
+  },
+  "variablesconfig": {
+    "loaded": {
+      "default": false
+    }
+  }
+}
