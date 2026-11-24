@@ -1,0 +1,129 @@
+import importlib.util
+from pathlib import Path
+import tempfile
+import unittest
+from unittest.mock import patch
+
+spec = importlib.util.spec_from_file_location('weather', Path(__file__).parents[1] / 'workflow/weather.alfredui/scripts/weather.py')
+weather = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(weather)
+
+
+class WeatherTests(unittest.TestCase):
+    def setUp(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        cache = patch.object(weather, 'CACHE', Path(directory.name))
+        cache.start()
+        self.addCleanup(cache.stop)
+        data = patch.object(weather, 'DATA', Path(directory.name) / 'data')
+        data.start()
+        self.addCleanup(data.stop)
+
+    def test_automatic_failure_uses_saved_city(self):
+        with patch.object(weather, 'fetch', side_effect=RuntimeError('offline')), patch.object(weather, 'geocode', return_value={'name': 'Dublin'}) as lookup:
+            place, mode = weather.location({'automatic': True, 'city': 'Dublin, Ireland'})
+            self.assertEqual(place['name'], 'Dublin')
+            lookup.assert_called_once_with('Dublin, Ireland', False)
+            self.assertIn('unavailable', mode)
+
+    def test_invalid_coordinates_fall_back(self):
+        with patch.object(weather, 'fetch', return_value={'latitude': 999, 'longitude': 0}), patch.object(weather, 'geocode', return_value={'name': 'Saved'}):
+            self.assertEqual(weather.location({'automatic': True, 'city': 'Saved'})[0]['name'], 'Saved')
+
+    def test_unknown_city_does_not_change_settings(self):
+        with tempfile.TemporaryDirectory() as directory:
+            with patch.object(weather, 'DATA', Path(directory)), patch.object(weather, 'SETTINGS', Path(directory) / 'settings.json'):
+                weather.save_settings({'automatic': False, 'city': 'Dublin'})
+                with patch.object(weather, 'fetch', return_value={'results': []}):
+                    with self.assertRaisesRegex(ValueError, 'Location not found'):
+                        weather.run('city', 'unknown')
+                self.assertEqual(weather.settings()['city'], 'Dublin')
+
+    def test_forecast_requests_fahrenheit_and_all_sections(self):
+        with patch.object(weather, 'fetch', return_value={}) as fetch:
+            weather.forecast({'latitude': 53.3, 'longitude': -6.2})
+            url = fetch.call_args.args[0]
+            self.assertIn('temperature_unit=fahrenheit', url)
+            self.assertIn('current=', url)
+            self.assertIn('hourly=', url)
+            self.assertIn('daily=', url)
+            self.assertIn('timezone=auto', url)
+            self.assertIn('forecast_days=3', url)
+            self.assertIn('apparent_temperature_max', url)
+            self.assertIn('apparent_temperature_min', url)
+            self.assertNotIn('temperature_2m', url)
+
+    def test_render_uses_forecast_local_time_and_handles_missing_values(self):
+        data = {
+            'current': {'time': '2026-11-24T09:15', 'weather_code': 0, 'is_day': 0, 'temperature_2m': 45, 'apparent_temperature': None, 'wind_speed_10m': 3, 'relative_humidity_2m': 80},
+            'hourly': {'time': ['2026-11-24T09:00', '2026-11-24T10:00'], 'weather_code': [0, 3], 'is_day': [1, 1], 'temperature_2m': [45, 46], 'apparent_temperature': [39, 40], 'precipitation_probability': [0, None]},
+            'daily': {'time': ['2026-11-24'], 'weather_code': [3], 'temperature_2m_max': [50], 'temperature_2m_min': [40], 'apparent_temperature_max': [46], 'apparent_temperature_min': [35], 'precipitation_probability_max': [30]},
+            'timezone': 'Europe/Dublin',
+        }
+        result = weather.render(data)
+        self.assertIn('39°F', result['summary']['text'])
+        self.assertIn('Max rain 0%', result['details']['text'])
+        self.assertEqual(len(result['hourly']['components']), 0)
+        self.assertEqual(result['daily']['components'][6]['text'], '46° / 35°')
+        self.assertEqual(len(result['daily']['components']), 8)
+        self.assertIn('Europe/Dublin', result['updated']['text'])
+
+    def test_fresh_cache_avoids_network_and_expiry_fetches_again(self):
+        with patch.object(weather, 'fetch', return_value={'value': 1}) as fetch, patch.object(weather.time, 'time', return_value=1000):
+            self.assertEqual(weather.cached_fetch('https://example.test', 600), {'value': 1})
+            weather.cached_fetch('https://example.test', 600)
+            self.assertEqual(fetch.call_count, 1)
+        with patch.object(weather, 'fetch', return_value={'value': 2}) as fetch, patch.object(weather.time, 'time', return_value=1600):
+            self.assertEqual(weather.cached_fetch('https://example.test', 600), {'value': 2})
+            fetch.assert_called_once()
+
+    def test_force_refresh_bypasses_fresh_cache(self):
+        with patch.object(weather, 'fetch', return_value={'value': 1}) as fetch:
+            weather.cached_fetch('https://example.test', 600)
+            weather.cached_fetch('https://example.test', 600, force=True)
+            self.assertEqual(fetch.call_count, 2)
+
+    def test_different_locations_have_separate_forecast_caches(self):
+        with patch.object(weather, 'fetch', return_value={'current': {}}) as fetch:
+            weather.forecast({'latitude': 1, 'longitude': 2})
+            weather.forecast({'latitude': 3, 'longitude': 4})
+            weather.forecast({'latitude': 1, 'longitude': 2})
+            self.assertEqual(fetch.call_count, 2)
+
+    def test_location_data_never_expires_but_force_updates_it(self):
+        with patch.object(weather, 'fetch', return_value={'latitude': 53}) as fetch, patch.object(weather.time, 'time', return_value=1000):
+            weather.cached_fetch('https://location.test', None)
+            fetch.assert_called_once()
+        with patch.object(weather, 'fetch', return_value={'latitude': 54}) as fetch, patch.object(weather.time, 'time', return_value=10**12):
+            self.assertEqual(weather.cached_fetch('https://location.test', None), {'latitude': 53})
+            fetch.assert_not_called()
+            self.assertEqual(weather.cached_fetch('https://location.test', None, force=True), {'latitude': 54})
+            fetch.assert_called_once()
+        self.assertTrue(list((weather.DATA / 'locations').glob('*.json')))
+        self.assertFalse(list(weather.CACHE.glob('*.json')))
+
+    def test_three_four_hour_blocks_show_minimum_temperature_and_maximum_rain(self):
+        from datetime import datetime, timedelta
+        start = datetime(2026, 11, 24, 22)
+        hourly = {
+            'time': [(start + timedelta(hours=i)).isoformat(timespec='minutes') for i in range(30)],
+            'apparent_temperature': [50, 41, None, 45] + [40] * 26,
+            'precipitation_probability': [10, 20, 80, None] + [30] * 26,
+            'weather_code': [0, 0, 61, 0] + [3] * 26,
+            'is_day': [0] * 30,
+        }
+        data = {'current': {'time': start.isoformat(), 'weather_code': 0, 'apparent_temperature': 50, 'wind_speed_10m': 1, 'relative_humidity_2m': 80}, 'hourly': hourly, 'daily': {'time': []}, 'timezone': 'Europe/Dublin'}
+        result = weather.render(data)
+        cards = result['hourly']['components']
+        self.assertEqual(len(cards), 3)
+        self.assertEqual(result['summary-heading']['text'], '10PM–1AM')
+        self.assertEqual(result['summary']['text'], '🌧️  41°F')
+        self.assertEqual(result['details']['text'], 'Max rain 80%')
+        self.assertEqual(cards[0]['components'][0]['text'], '2AM–5AM')
+        self.assertEqual(cards[-1]['components'][0]['text'], '10AM–1PM')
+        hourly['apparent_temperature'] = [None] * 30
+        hourly['precipitation_probability'] = [None] * 30
+        empty = weather.render(data)['hourly']['components'][0]['components']
+        self.assertIn('—', empty[1]['text'])
+        self.assertEqual(empty[2]['text'], '—')

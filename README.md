@@ -11,3 +11,5 @@ Alfred workflows by **Yuri Parsons** — [ninjakitty.net](https://www.ninjakitty
 
 - [Google Search Menu](google-search-menu/README.md): choose Google, Reddit, or FTL searches in a new Chrome window.
 - [Open URL in Browser](open-url-in-browser/README.md): open a URL in a new Chrome window from Alfred keyword or selected text hotkey.
+
+- [Weather](weather/README.md): current conditions, hourly and three-day forecasts inside Alfred, in Fahrenheit.
