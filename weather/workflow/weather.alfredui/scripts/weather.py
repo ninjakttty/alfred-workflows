@@ -144,6 +144,12 @@ def label(text, size=13, **extra):
     return {'type': 'label', 'text': text, 'font': {'size': size}, **extra}
 
 
+def forecast_card(components):
+    return {'type': 'view', 'layout': 'inline', 'direction': 'vertical',
+            'spacing': 7, 'padding': 12, 'cornerradius': 12,
+            'background': '#80808018', 'components': components}
+
+
 def render(data, unit='fahrenheit'):
     unit_symbol = '°C' if unit == 'celsius' else '°F'
 
@@ -171,16 +177,25 @@ def render(data, unit='fahrenheit'):
         span = start.strftime('%-I%p') if len(block) == 1 else start.strftime('%-I%p') + '–' + end.strftime('%-I%p')
         tooltip = start.strftime('%a %-d %b, %-I %p') + ' to ' + end.strftime('%a %-d %b, %-I %p') + ' · ' + name
         blocks.append({'span': span, 'tooltip': tooltip, 'symbol': symbol, 'temperature': min(temperatures) if temperatures else None, 'rain': max(rain) if rain else None})
-        hours.append({'type': 'view', 'layout': 'inline', 'direction': 'vertical', 'spacing': 5, 'padding': 8, 'components': [label(span, 11, tooltip=tooltip), label(symbol + ' ' + temperature(min(temperatures) if temperatures else None), 17, tooltip='Lowest feels-like temperature · ' + tooltip), label(number(max(rain) if rain else None, '% rain'), tooltip='Highest hourly rain probability')]})
+        hours.append(forecast_card([
+            label(span, 12, colour='secondaryLabelColor', tooltip=tooltip),
+            label(symbol + ' ' + temperature(min(temperatures) if temperatures else None), 24),
+            label(number(max(rain) if rain else None, '% rain'), 12, colour='secondaryLabelColor', tooltip='Highest hourly rain probability'),
+        ]))
     first = blocks[0] if blocks else {'span': 'Unavailable', 'tooltip': '', 'symbol': '🌡️', 'temperature': None, 'rain': None}
-    days = [label('Day'), label('Conditions'), label('High / Low'), label('Rain')]
+    days = []
     for i, date in enumerate(daily['time'][:3]):
         symbol, name = condition(daily['weather_code'][i])
-        days.extend([label('Today' if i == 0 else datetime.fromisoformat(date).strftime('%a, %b %-d')), label(symbol + ' ' + name), label(temperature(daily['apparent_temperature_max'][i]) + ' / ' + temperature(daily['apparent_temperature_min'][i])), label(number(daily['precipitation_probability_max'][i], '%'))])
+        days.append({'type': 'view', 'layout': 'grid', 'cols': 4, 'rows': 1, 'spacing': 8, 'components': [
+            label('Today' if i == 0 else datetime.fromisoformat(date).strftime('%a, %b %-d'), 12, colour='secondaryLabelColor'),
+            label(symbol + ' ' + name, 13, colour='secondaryLabelColor'),
+            label(temperature(daily['apparent_temperature_max'][i]) + ' / ' + temperature(daily['apparent_temperature_min'][i]), 14, constraints={'position': 'right'}, tooltip='High / Low feels-like temperature'),
+            label(number(daily['precipitation_probability_max'][i], '% rain'), 12, colour='secondaryLabelColor', constraints={'position': 'right'}),
+        ]})
     return {
         'summary-heading': {'text': first['span'], 'tooltip': first['tooltip']},
         'summary': {'text': f'{first["symbol"]}  {temperature(first["temperature"], unit_symbol)}'},
-        'details': {'text': f'Max rain {number(first["rain"], "%")}'},
+        'details': {'text': f'{number(first["rain"], "%")} rain'},
         'hourly': {'components': hours[1:]},
         'daily': {'components': days},
     }
@@ -188,19 +203,23 @@ def render(data, unit='fahrenheit'):
 
 def configuration(config):
     location_controls = json.loads((Path(__file__).resolve().parents[1] / 'components/location-settings.json').read_text())
+    location_controls[0].update(font={'size': 12}, colour='secondaryLabelColor')
     location_controls[0]['text'] = 'Approximate location from IP' if config['automatic'] else 'Saved location'
     location_controls[1]['components'][0]['text'] = config['city']
     return {'sheet': {'id': 'weather-settings', 'root': {
         'type': 'view', 'layout': 'inline', 'direction': 'vertical',
         'padding': 20, 'spacing': 12, 'components': [
             label('Weather settings', 20),
-            *location_controls,
-            label('Temperature'),
-            {'id': 'temperature-unit', 'type': 'picker', 'selected': config.get('unit', 'fahrenheit'),
-             'items': [{'text': 'Celsius (°C)', 'value': 'celsius'}, {'text': 'Fahrenheit (°F)', 'value': 'fahrenheit'}]},
-            label('Forecast by Open-Meteo · Location by ipapi', 12),
-            {'id': 'settings-error', 'type': 'label', 'text': '', 'hidden': True, 'colour': 'systemRedColor'},
-            {'type': 'view', 'layout': 'inline', 'spacing': 8, 'components': [
+            forecast_card([label('Location', 14), *location_controls]),
+            {'type': 'view', 'layout': 'border', 'padding': 12, 'cornerradius': 12, 'background': '#80808018', 'components': [
+                label('Temperature', 14, constraints={'region': 'left', 'position': 'centre'}),
+                {'id': 'temperature-unit', 'type': 'picker', 'selected': config.get('unit', 'fahrenheit'),
+                 'constraints': {'region': 'right'},
+                 'items': [{'text': 'Celsius (°C)', 'value': 'celsius'}, {'text': 'Fahrenheit (°F)', 'value': 'fahrenheit'}]},
+            ]},
+            label('Forecast by Open-Meteo · Location by ipapi', 11, colour='secondaryLabelColor'),
+            {'id': 'settings-error', 'type': 'view', 'layout': 'inline', 'components': []},
+            {'type': 'view', 'layout': 'inline', 'spacing': 8, 'constraints': {'position': 'right'}, 'components': [
                 {'type': 'button', 'text': 'Cancel', 'events': [{'triggers': 'actioned', 'action': {'type': 'json', 'src': {'sheet': {'close': 'weather-settings'}}}}]},
                 {'id': 'apply-settings', 'type': 'button', 'text': 'Apply', 'events': [{'triggers': 'actioned', 'action': [
                     {'type': 'json', 'src': {'update': {'ids': {'apply-settings': {'enabled': False}}}}},
@@ -239,10 +258,10 @@ def run(command, city=''):
     if command in ('city', 'automatic', 'unit'):
         save_settings(config)
     ids.update({name: {'enabled': True} for name in CONTROLS})
-    ids.update({'location': {'text': place['name']}, 'status': {'text': '', 'hidden': True}})
+    ids.update({'location': {'text': place['name'], 'tooltip': place['name']}, 'status': {'components': []}})
     if command in ('city', 'automatic', 'unit'):
         ids.update({name: {'enabled': True} for name in CONFIG_CONTROLS})
-        ids.update({'mode': {'text': mode}, 'city': {'text': config['city'], 'enabled': True}, 'settings-error': {'text': '', 'hidden': True}})
+        ids.update({'mode': {'text': mode}, 'city': {'text': config['city'], 'enabled': True}, 'settings-error': {'components': []}})
     result = {'update': {'ids': ids, 'relayout': True}, 'window': {'resize': {'height': 'auto'}}}
     if command == 'unit':
         result['sheet'] = {'close': 'weather-settings'}
@@ -255,10 +274,10 @@ if __name__ == '__main__':
     except Exception as error:
         print('Weather: ' + str(error), file=sys.stderr)
         ids = {name: {'enabled': True} for name in CONTROLS}
-        ids['status'] = {'text': 'Could not load weather: ' + str(error), 'hidden': False, 'colour': 'systemRedColor'}
+        ids['status'] = {'components': [label('Could not load weather: ' + str(error), 12, colour='systemRedColor', linebreak='wordwrap')]}
         if sys.argv[1] in ('city', 'automatic', 'unit'):
             ids.update({name: {'enabled': True} for name in CONFIG_CONTROLS})
-            ids['settings-error'] = {'text': str(error), 'hidden': False, 'colour': 'systemRedColor'}
+            ids['settings-error'] = {'components': [label(str(error), 12, colour='systemRedColor', linebreak='wordwrap')]}
         result = {'update': {'ids': ids, 'relayout': True}}
     # Alfred UI needs a successful script exit to process error-display JSON too.
     print(json.dumps(result, ensure_ascii=False))

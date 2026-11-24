@@ -3,12 +3,12 @@
   "iconpath": "../icon.png",
   "window": {
     "title": "Weather",
-    "padding": 12,
+    "padding": 18,
     "root": {
       "type": "view",
       "layout": "inline",
       "direction": "vertical",
-      "spacing": 6,
+      "spacing": 14,
       "events": [
         {
           "triggers": "launched",
@@ -22,9 +22,16 @@
                       "enabled": false
                     },
                     "status": {
-                      "text": "Loading weather…",
-                      "hidden": false,
-                      "colour": "secondaryLabelColor"
+                      "components": [
+                        {
+                          "type": "label",
+                          "text": "Updating weather…",
+                          "font": {
+                            "size": 12
+                          },
+                          "colour": "secondaryLabelColor"
+                        }
+                      ]
                     },
                     "settings": {
                       "enabled": false
@@ -50,89 +57,117 @@
           "type": "label",
           "text": "Weather",
           "font": {
-            "size": 23
+            "size": 17,
+            "weight": "semibold"
           }
         },
         {
-          "id": "status",
-          "type": "label",
-          "text": "Loading weather…",
-          "font": {
-            "size": 13
-          }
-        },
-        {
-          "id": "summary-heading",
-          "type": "label",
-          "text": "",
-          "font": {
-            "size": 13
-          }
-        },
-        {
-          "id": "summary",
-          "type": "label",
-          "text": "—",
-          "font": {
-            "size": 32
-          }
-        },
-        {
-          "id": "details",
-          "type": "label",
-          "text": "",
-          "font": {
-            "size": 13
-          },
-          "constraints": {
-            "insets": {
-              "bottom": 12
-            }
-          }
-        },
-        {
-          "id": "hourly-heading",
-          "type": "label",
-          "text": "Rest of the day",
-          "font": {
-            "size": 16
-          }
-        },
-        {
-          "id": "hourly",
           "type": "view",
-          "layout": "grid",
-          "cols": 3,
-          "rows": 1,
-          "spacing": 16,
-          "components": [],
-          "constraints": {
-            "insets": {
-              "bottom": 12
+          "layout": "border",
+          "padding": 16,
+          "cornerradius": 14,
+          "background": "#80808018",
+          "components": [
+            {
+              "type": "view",
+              "layout": "inline",
+              "direction": "vertical",
+              "spacing": 4,
+              "constraints": {
+                "region": "left"
+              },
+              "components": [
+                {
+                  "id": "summary-heading",
+                  "type": "label",
+                  "text": "",
+                  "font": {
+                    "size": 12
+                  },
+                  "colour": "secondaryLabelColor"
+                },
+                {
+                  "id": "summary",
+                  "type": "label",
+                  "text": "—",
+                  "font": {
+                    "size": 42,
+                    "weight": "medium"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "details",
+              "type": "label",
+              "text": "",
+              "font": {
+                "size": 16,
+                "weight": "medium"
+              },
+              "constraints": {
+                "region": "right",
+                "position": "centre"
+              },
+              "colour": "secondaryLabelColor"
             }
-          }
+          ]
         },
         {
-          "id": "daily-heading",
-          "type": "label",
-          "text": "3-day forecast",
-          "font": {
-            "size": 16
-          }
-        },
-        {
-          "id": "daily",
           "type": "view",
-          "layout": "grid",
-          "cols": 4,
-          "rows": 4,
+          "layout": "inline",
+          "direction": "vertical",
           "spacing": 8,
-          "components": [],
-          "constraints": {
-            "insets": {
-              "bottom": 12
+          "components": [
+            {
+              "id": "hourly-heading",
+              "type": "label",
+              "text": "Rest of the day",
+              "font": {
+                "size": 12,
+                "weight": "semibold"
+              },
+              "colour": "secondaryLabelColor"
+            },
+            {
+              "id": "hourly",
+              "type": "view",
+              "layout": "grid",
+              "cols": 3,
+              "rows": 1,
+              "spacing": 10,
+              "components": []
             }
-          }
+          ]
+        },
+        {
+          "type": "view",
+          "layout": "inline",
+          "direction": "vertical",
+          "spacing": 8,
+          "components": [
+            {
+              "id": "daily-heading",
+              "type": "label",
+              "text": "3-day forecast",
+              "font": {
+                "size": 12,
+                "weight": "semibold"
+              },
+              "colour": "secondaryLabelColor"
+            },
+            {
+              "id": "daily",
+              "type": "view",
+              "layout": "inline",
+              "spacing": 8,
+              "components": [],
+              "direction": "vertical",
+              "padding": 12,
+              "cornerradius": 12,
+              "background": "#80808018"
+            }
+          ]
         },
         {
           "type": "view",
@@ -156,9 +191,16 @@
                               "enabled": false
                             },
                             "status": {
-                              "text": "Loading weather…",
-                              "hidden": false,
-                              "colour": "secondaryLabelColor"
+                              "components": [
+                                {
+                                  "type": "label",
+                                  "text": "Updating weather…",
+                                  "font": {
+                                    "size": 12
+                                  },
+                                  "colour": "secondaryLabelColor"
+                                }
+                              ]
                             },
                             "settings": {
                               "enabled": false
@@ -180,6 +222,18 @@
               ],
               "constraints": {
                 "region": "left"
+              },
+              "bordered": false
+            },
+            {
+              "id": "status",
+              "type": "view",
+              "layout": "inline",
+              "direction": "vertical",
+              "components": [],
+              "constraints": {
+                "region": "centre",
+                "position": "centre"
               }
             },
             {

@@ -52,9 +52,16 @@
                         "enabled": false
                       },
                       "status": {
-                        "text": "Loading weather…",
-                        "hidden": false,
-                        "colour": "secondaryLabelColor"
+                        "components": [
+                          {
+                            "type": "label",
+                            "text": "Updating weather…",
+                            "font": {
+                              "size": 12
+                            },
+                            "colour": "secondaryLabelColor"
+                          }
+                        ]
                       },
                       "settings": {
                         "enabled": false
@@ -66,9 +73,16 @@
                         "enabled": false
                       },
                       "settings-error": {
-                        "text": "Loading weather…",
-                        "hidden": false,
-                        "colour": "secondaryLabelColor"
+                        "components": [
+                          {
+                            "type": "label",
+                            "text": "Updating location…",
+                            "font": {
+                              "size": 12
+                            },
+                            "colour": "secondaryLabelColor"
+                          }
+                        ]
                       }
                     }
                   }
@@ -113,9 +127,16 @@
                         "enabled": false
                       },
                       "status": {
-                        "text": "Loading weather…",
-                        "hidden": false,
-                        "colour": "secondaryLabelColor"
+                        "components": [
+                          {
+                            "type": "label",
+                            "text": "Updating weather…",
+                            "font": {
+                              "size": 12
+                            },
+                            "colour": "secondaryLabelColor"
+                          }
+                        ]
                       },
                       "settings": {
                         "enabled": false
@@ -127,9 +148,16 @@
                         "enabled": false
                       },
                       "settings-error": {
-                        "text": "Loading weather…",
-                        "hidden": false,
-                        "colour": "secondaryLabelColor"
+                        "components": [
+                          {
+                            "type": "label",
+                            "text": "Updating location…",
+                            "font": {
+                              "size": 12
+                            },
+                            "colour": "secondaryLabelColor"
+                          }
+                        ]
                       }
                     }
                   }

@@ -34,3 +34,14 @@ Moved the location-mode text, city field, Use city, and Current area into the ge
 ## Final settings and footer layout — 24 November 2026
 
 Verified the native settings sheet with location controls, Celsius/Fahrenheit selection, and provider credits. The main forecast no longer displays timestamp, timezone, unit explanation, or credits. Visually verified Refresh aligned left and the gear aligned at the far right in the installed Alfred workflow. The user tested and approved this layout for commit. Twelve tests pass.
+
+
+## UI redesign — 24 November 2026
+
+Redesigned on `feat/weather-ui-redesign`: compact location heading, a grouped main forecast card, consistent rounded cards for the three following blocks and daily forecasts, quieter section headings, and Refresh/settings at opposite ends of the footer. Removed the hidden status label's reserved space; loading and errors now appear only when needed in the footer. Settings groups location and temperature into separate cards and aligns its actions right.
+
+Installed and visually checked both views in Alfred. Exercised an invalid location search and verified the error while retaining the existing forecast and saved settings; cancelled settings and refreshed successfully, observing the temporary loading state and restored controls. Temperature preference and location settings were preserved. Twelve tests pass, including updated Celsius and minimum/maximum aggregation checks against the new daily cards. Changes remain uncommitted.
+
+## Compact daily list — 24 November 2026
+
+Replaced the daily forecast cards with three compact, aligned rows in one rounded panel. Each row retains day/date, conditions, feels-like high/low, and rain probability. The main and hourly cards are unchanged. Rebuilt and installed; visually verified the compact list in Alfred. All twelve tests pass.

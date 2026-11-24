@@ -63,10 +63,10 @@ class WeatherTests(unittest.TestCase):
         }
         result = weather.render(data)
         self.assertIn('39°F', result['summary']['text'])
-        self.assertIn('Max rain 0%', result['details']['text'])
+        self.assertIn('0% rain', result['details']['text'])
         self.assertEqual(len(result['hourly']['components']), 0)
-        self.assertEqual(result['daily']['components'][6]['text'], '46° / 35°')
-        self.assertEqual(len(result['daily']['components']), 8)
+        self.assertEqual(result['daily']['components'][0]['components'][2]['text'], '46° / 35°')
+        self.assertEqual(len(result['daily']['components']), 1)
 
     def test_fresh_cache_avoids_network_and_expiry_fetches_again(self):
         with patch.object(weather, 'fetch', return_value={'value': 1}) as fetch, patch.object(weather.time, 'time', return_value=1000):
@@ -118,7 +118,7 @@ class WeatherTests(unittest.TestCase):
         self.assertEqual(len(cards), 3)
         self.assertEqual(result['summary-heading']['text'], '10PM–1AM')
         self.assertEqual(result['summary']['text'], '🌧️  41°F')
-        self.assertEqual(result['details']['text'], 'Max rain 80%')
+        self.assertEqual(result['details']['text'], '80% rain')
         self.assertEqual(cards[0]['components'][0]['text'], '2AM–5AM')
         self.assertEqual(cards[-1]['components'][0]['text'], '10AM–1PM')
         hourly['apparent_temperature'] = [None] * 30
@@ -139,7 +139,7 @@ class WeatherTests(unittest.TestCase):
         result = weather.render(data, 'celsius')
         self.assertEqual(result['summary']['text'], '☁️  0°C')
         self.assertEqual(result['hourly']['components'][0]['components'][1]['text'], '☁️ 0°')
-        self.assertEqual(result['daily']['components'][6]['text'], '10° / -10°')
+        self.assertEqual(result['daily']['components'][0]['components'][2]['text'], '10° / -10°')
         self.assertEqual(data['hourly']['apparent_temperature'][0], 32)
 
     def test_unit_change_persists_and_preserves_location(self):

@@ -1,6 +1,6 @@
 # Weather
 
-A native AlfredUI forecast inside Alfred. Requires Alfred 6 with Powerpack, Python 3, and macOS's built-in curl. No API key, compiled app, or third-party Python package is needed.
+A native AlfredUI forecast inside Alfred, with a grouped main summary and hourly forecast cards and a compact three-day list. Requires Alfred 6 with Powerpack, Python 3, and macOS's built-in curl. No API key, compiled app, or third-party Python package is needed.
 
 ## Use
 
