@@ -49,3 +49,7 @@ Replaced the daily forecast cards with three compact, aligned rows in one rounde
 ## README screenshots — 24 November 2026
 
 Captured the real installed Alfred forecast and settings views and added both screenshots to the README. All twelve tests and the whitespace check passed before merging. Keyboard shortcuts remain deferred.
+
+## Heading alignment — 24 November 2026
+
+Made Rest of the day and 3-day forecast bold and inset them 12 points to align with the box contents. Inset Refresh to the same visible text alignment. Installed and visually verified in Alfred, then refreshed both README screenshots. All twelve tests pass.
