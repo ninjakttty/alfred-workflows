@@ -53,3 +53,25 @@ Captured the real installed Alfred forecast and settings views and added both sc
 ## Heading alignment — 24 November 2026
 
 Made Rest of the day and 3-day forecast bold and inset them 12 points to align with the box contents. Inset Refresh to the same visible text alignment. Installed and visually verified in Alfred, then refreshed both README screenshots. All twelve tests pass.
+
+
+## Main rain animation prototype — 24 November 2026
+
+Added a small bundled GIF for the main rain/drizzle icon, generated locally with AppKit and ImageIO. Other main conditions, including thunderstorms and snow, and all smaller icons remain static. There is no WebKit view, polling script, or extra network request for animation. Native playback was verified in the real Alfred view: consecutive screenshots visibly show raindrops at different positions. Updated the forecast screenshot. Thirteen tests pass, including resetting the image when conditions change. The prototype is installed and remains uncommitted on `feat/weather-rain-animation`.
+
+
+## All main condition animations and preview — 24 November 2026
+
+Extended the main icon to ten bundled native GIFs: sunshine, clear night, day/night partly cloudy, overcast, fog, drizzle, rain, snow, and thunderstorms. Unknown conditions retain a static fallback. Smaller hourly and daily icons remain static. Assets are generated with AppKit/ImageIO from `scripts/draw-weather-icons.swift`; no additional runtime dependencies, WebKit views, repeating scripts, or network requests are needed for playback.
+
+Added Settings → Preview weather icons, a local-only picker that can display every animation without changing the live forecast or saved settings. Verified preview navigation and sunshine, clear night, cloudy night, fog, snow, thunderstorm, and rain rendering in Alfred. Decoded every asset with ImageIO: each has 24 valid frames with multiple distinct images. Thunderstorm uses a slow soft bolt glow instead of rapid flashing. Updated main/settings screenshots and added a preview screenshot to both READMEs. Fifteen tests pass, covering condition mapping, fallback, and preview isolation. The workflow is installed; changes remain uncommitted.
+
+## Installed version and preview removal — 25 November 2026
+
+Audited Alfred's active Weather folder after its UUID changed on reimport. The scripts and ten animation assets matched the working tree. Rebuilt as version 1.1.0, added the version to the keyword subtitle and settings heading, and installed into the active folder located by bundle ID. Tested the actual weather keyword through launch, settings, and the animation preview.
+
+At the user's request, removed the preview button from settings and its README screenshot links; animated main icons remain enabled. Rebuilt and reinstalled, verified Settings shows 1.1.0 without the preview button, and refreshed its screenshot. Fifteen tests pass.
+
+## City error clipping — 25 November 2026
+
+The settings sheet initially allocated no height for errors; later text could be clipped. Reserved a two-line error area, gave the error label the same height with word wrapping/full-text tooltip, and shortened the city-search guidance to “City not found. Try ‘Dublin, Ireland’.” Tested an invalid city in the installed Alfred settings and visually confirmed the complete message. Cleared the test error while preserving the saved location and unit. Fifteen tests pass.

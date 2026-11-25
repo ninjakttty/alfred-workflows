@@ -87,13 +87,26 @@
                   "colour": "secondaryLabelColor"
                 },
                 {
-                  "id": "summary",
-                  "type": "label",
-                  "text": "—",
-                  "font": {
-                    "size": 42,
-                    "weight": "medium"
-                  }
+                  "type": "view",
+                  "layout": "inline",
+                  "spacing": 8,
+                  "components": [
+                    {
+                      "id": "summary-icon",
+                      "type": "view",
+                      "layout": "inline",
+                      "components": []
+                    },
+                    {
+                      "id": "summary",
+                      "type": "label",
+                      "text": "—",
+                      "font": {
+                        "size": 42,
+                        "weight": "medium"
+                      }
+                    }
+                  ]
                 }
               ]
             },

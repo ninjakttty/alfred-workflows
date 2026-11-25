@@ -2,6 +2,7 @@
 """Weather data and native AlfredUI rendering, using only the standard library."""
 from datetime import datetime
 import json
+import plistlib
 import hashlib
 import time
 import os
@@ -85,7 +86,7 @@ def save_settings(value):
 def geocode(city, force=False):
     results = cached_fetch('https://geocoding-api.open-meteo.com/v1/search?' + urlencode({'name': city, 'count': 1, 'language': 'en'}), None, force).get('results', [])
     if not results:
-        raise ValueError('Location not found. Try a city followed by its country.')
+        raise ValueError('City not found. Try ‘Dublin, Ireland’.')
     place = results[0]
     return {'latitude': place['latitude'], 'longitude': place['longitude'], 'name': ', '.join(dict.fromkeys(filter(None, [place['name'], place.get('admin1'), place.get('country')])))}
 
@@ -136,6 +137,38 @@ def condition(code, day=True):
     return '🌡️', 'Unknown conditions'
 
 
+ANIMATIONS = {
+    'clear-day': 'Sunshine', 'clear-night': 'Clear night',
+    'partly-cloudy-day': 'Partly cloudy', 'partly-cloudy-night': 'Cloudy night',
+    'overcast': 'Overcast', 'fog': 'Fog', 'drizzle': 'Drizzle',
+    'rain': 'Rain', 'snow': 'Snow', 'thunderstorm': 'Thunderstorm',
+}
+
+
+def animation_name(code, day=True):
+    if code == 0:
+        return 'clear-day' if day else 'clear-night'
+    if code in (1, 2):
+        return 'partly-cloudy-day' if day else 'partly-cloudy-night'
+    if code == 3:
+        return 'overcast'
+    if code in (45, 48):
+        return 'fog'
+    if code in (51, 53, 55, 56, 57):
+        return 'drizzle'
+    if code in (61, 63, 65, 66, 67, 80, 81, 82):
+        return 'rain'
+    if code in (71, 73, 75, 77, 85, 86):
+        return 'snow'
+    if code in (95, 96, 99):
+        return 'thunderstorm'
+    return None
+
+
+def animated_image(name):
+    return {'type': 'file', 'src': 'assets/' + name + '.gif'}
+
+
 def number(value, suffix=''):
     return '—' if value is None else f'{round(value)}{suffix}'
 
@@ -176,13 +209,15 @@ def render(data, unit='fahrenheit'):
         symbol, name = condition(hourly['weather_code'][representative], hourly['is_day'][representative])
         span = start.strftime('%-I%p') if len(block) == 1 else start.strftime('%-I%p') + '–' + end.strftime('%-I%p')
         tooltip = start.strftime('%a %-d %b, %-I %p') + ' to ' + end.strftime('%a %-d %b, %-I %p') + ' · ' + name
-        blocks.append({'span': span, 'tooltip': tooltip, 'symbol': symbol, 'temperature': min(temperatures) if temperatures else None, 'rain': max(rain) if rain else None})
+        blocks.append({'span': span, 'tooltip': tooltip, 'symbol': symbol, 'code': hourly['weather_code'][representative], 'is_day': hourly['is_day'][representative], 'temperature': min(temperatures) if temperatures else None, 'rain': max(rain) if rain else None})
         hours.append(forecast_card([
             label(span, 12, colour='secondaryLabelColor', tooltip=tooltip),
             label(symbol + ' ' + temperature(min(temperatures) if temperatures else None), 24),
             label(number(max(rain) if rain else None, '% rain'), 12, colour='secondaryLabelColor', tooltip='Highest hourly rain probability'),
         ]))
-    first = blocks[0] if blocks else {'span': 'Unavailable', 'tooltip': '', 'symbol': '🌡️', 'temperature': None, 'rain': None}
+    first = blocks[0] if blocks else {'span': 'Unavailable', 'tooltip': '', 'symbol': '🌡️', 'code': None, 'temperature': None, 'rain': None}
+    animation = animation_name(first['code'], first.get('is_day', True))
+    main_icon = [{'type': 'imageview', 'image': animated_image(animation), 'constraints': {'size': {'width': 56, 'height': 56}}, 'accessibility': {'label': ANIMATIONS[animation]}}] if animation else []
     days = []
     for i, date in enumerate(daily['time'][:3]):
         symbol, name = condition(daily['weather_code'][i])
@@ -194,11 +229,35 @@ def render(data, unit='fahrenheit'):
         ]})
     return {
         'summary-heading': {'text': first['span'], 'tooltip': first['tooltip']},
-        'summary': {'text': f'{first["symbol"]}  {temperature(first["temperature"], unit_symbol)}'},
+        'summary-icon': {'components': main_icon},
+        'summary': {'text': temperature(first['temperature'], unit_symbol) if animation else f'{first["symbol"]}  {temperature(first["temperature"], unit_symbol)}'},
         'details': {'text': f'{number(first["rain"], "%")} rain'},
         'hourly': {'components': hours[1:]},
         'daily': {'components': days},
     }
+
+
+def icon_preview(name='rain'):
+    if name not in ANIMATIONS:
+        raise ValueError('Unknown icon preview')
+    return {'sheet': {'id': 'weather-preview', 'root': {
+        'type': 'view', 'layout': 'inline', 'direction': 'vertical',
+        'padding': 20, 'spacing': 16, 'components': [
+            label('Weather icons', 20),
+            label('Preview only · your forecast and location stay unchanged', 12, colour='secondaryLabelColor'),
+            {'type': 'picker', 'selected': name,
+             'items': [{'text': title, 'value': key} for key, title in ANIMATIONS.items()],
+             'events': [{'triggers': 'changed', 'action': {'type': 'script', 'src': 'scripts/weather.py', 'args': ['preview-icon', '{value:self.selected.value}']}}]},
+            {'id': 'preview-icon', 'type': 'imageview', 'image': animated_image(name),
+             'constraints': {'size': {'width': 112, 'height': 112}, 'position': 'centre'},
+             'accessibility': {'label': ANIMATIONS[name]}},
+            {'type': 'button', 'text': 'Back to settings', 'constraints': {'position': 'right'},
+             'events': [{'triggers': 'actioned', 'action': [
+                 {'type': 'json', 'src': {'sheet': {'close': 'weather-preview'}}},
+                 {'type': 'script', 'src': 'scripts/weather.py', 'args': ['config']},
+             ]}]},
+        ],
+    }}}
 
 
 def configuration(config):
@@ -209,7 +268,7 @@ def configuration(config):
     return {'sheet': {'id': 'weather-settings', 'root': {
         'type': 'view', 'layout': 'inline', 'direction': 'vertical',
         'padding': 20, 'spacing': 12, 'components': [
-            label('Weather settings', 20),
+            label('Weather settings · ' + plistlib.loads((Path(__file__).resolve().parents[2] / 'info.plist').read_bytes())['version'], 20),
             forecast_card([label('Location', 14), *location_controls]),
             {'type': 'view', 'layout': 'border', 'padding': 12, 'cornerradius': 12, 'background': '#80808018', 'components': [
                 label('Temperature', 14, constraints={'region': 'left', 'position': 'centre'}),
@@ -218,7 +277,7 @@ def configuration(config):
                  'items': [{'text': 'Celsius (°C)', 'value': 'celsius'}, {'text': 'Fahrenheit (°F)', 'value': 'fahrenheit'}]},
             ]},
             label('Forecast by Open-Meteo · Location by ipapi', 11, colour='secondaryLabelColor'),
-            {'id': 'settings-error', 'type': 'view', 'layout': 'inline', 'components': []},
+            {'id': 'settings-error', 'type': 'view', 'layout': 'inline', 'constraints': {'size': {'height': 36}}, 'components': []},
             {'type': 'view', 'layout': 'inline', 'spacing': 8, 'constraints': {'position': 'right'}, 'components': [
                 {'type': 'button', 'text': 'Cancel', 'events': [{'triggers': 'actioned', 'action': {'type': 'json', 'src': {'sheet': {'close': 'weather-settings'}}}}]},
                 {'id': 'apply-settings', 'type': 'button', 'text': 'Apply', 'events': [{'triggers': 'actioned', 'action': [
@@ -231,6 +290,12 @@ def configuration(config):
 
 
 def run(command, city=''):
+    if command == 'preview':
+        return icon_preview()
+    if command == 'preview-icon':
+        if city not in ANIMATIONS:
+            raise ValueError('Unknown icon preview')
+        return {'update': {'ids': {'preview-icon': {'image': animated_image(city), 'accessibility': {'label': ANIMATIONS[city]}}}}}
     config = settings()
     if command == 'config':
         return configuration(config)
@@ -277,7 +342,7 @@ if __name__ == '__main__':
         ids['status'] = {'components': [label('Could not load weather: ' + str(error), 12, colour='systemRedColor', linebreak='wordwrap')]}
         if sys.argv[1] in ('city', 'automatic', 'unit'):
             ids.update({name: {'enabled': True} for name in CONFIG_CONTROLS})
-            ids['settings-error'] = {'components': [label(str(error), 12, colour='systemRedColor', linebreak='wordwrap')]}
+            ids['settings-error'] = {'components': [label(str(error), 12, colour='systemRedColor', linebreak='wordwrap', tooltip=str(error), constraints={'size': {'height': 36}})]}
         result = {'update': {'ids': ids, 'relayout': True}}
     # Alfred UI needs a successful script exit to process error-display JSON too.
     print(json.dumps(result, ensure_ascii=False))
