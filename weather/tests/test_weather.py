@@ -192,3 +192,13 @@ class WeatherTests(unittest.TestCase):
                 self.assertEqual(result['update']['ids']['preview-icon']['image']['src'], 'assets/' + name + '.gif')
             fetch.assert_not_called()
             save.assert_not_called()
+
+    def test_title_uses_exact_city_name_and_preserves_full_location_tooltip(self):
+        response = {'results': [{'name': 'Washington, D.C.', 'admin1': 'District of Columbia', 'country': 'United States', 'latitude': 38.9, 'longitude': -77.0}]}
+        with patch.object(weather, 'fetch', return_value=response):
+            place = weather.geocode('Washington')
+        self.assertEqual(place['city'], 'Washington, D.C.')
+        with patch.object(weather, 'settings', return_value={'automatic': False, 'city': 'Washington'}), patch.object(weather, 'location', return_value=(place, 'Saved location')), patch.object(weather, 'forecast', return_value={}), patch.object(weather, 'render', return_value={}):
+            title = weather.run('load')['update']['ids']['location']
+        self.assertEqual(title['text'], 'Washington, D.C.')
+        self.assertIn('United States', title['tooltip'])

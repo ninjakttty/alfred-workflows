@@ -75,3 +75,7 @@ At the user's request, removed the preview button from settings and its README s
 ## City error clipping — 25 November 2026
 
 The settings sheet initially allocated no height for errors; later text could be clipped. Reserved a two-line error area, gave the error label the same height with word wrapping/full-text tooltip, and shortened the city-search guidance to “City not found. Try ‘Dublin, Ireland’.” Tested an invalid city in the installed Alfred settings and visually confirmed the complete message. Cleared the test error while preserving the saved location and unit. Fifteen tests pass.
+
+## City-only title — 25 November 2026
+
+Forecast titles now use the provider's city field rather than the joined city/region/country name. The full resolved name remains in the tooltip. A regression test preserves city names containing commas. Rebuilt and installed; observed “Stillorgan” as the title in Alfred and refreshed the forecast screenshot. Sixteen tests pass.

@@ -88,7 +88,7 @@ def geocode(city, force=False):
     if not results:
         raise ValueError('City not found. Try ‘Dublin, Ireland’.')
     place = results[0]
-    return {'latitude': place['latitude'], 'longitude': place['longitude'], 'name': ', '.join(dict.fromkeys(filter(None, [place['name'], place.get('admin1'), place.get('country')])))}
+    return {'latitude': place['latitude'], 'longitude': place['longitude'], 'city': place['name'], 'name': ', '.join(dict.fromkeys(filter(None, [place['name'], place.get('admin1'), place.get('country')])))}
 
 
 def location(config, force=False):
@@ -98,7 +98,7 @@ def location(config, force=False):
             lat, lon = float(place['latitude']), float(place['longitude'])
             if not (-90 <= lat <= 90 and -180 <= lon <= 180):
                 raise ValueError('Invalid automatic coordinates')
-            return {'latitude': lat, 'longitude': lon, 'name': ', '.join(filter(None, [place.get('city'), place.get('country_name')])) or 'Current area'}, 'Approximate location from IP'
+            return {'latitude': lat, 'longitude': lon, 'city': place.get('city') or 'Current area', 'name': ', '.join(filter(None, [place.get('city'), place.get('country_name')])) or 'Current area'}, 'Approximate location from IP'
         except Exception as error:
             print('Automatic location failed: ' + str(error), file=sys.stderr)
             return geocode(config['city'], force), 'Automatic location unavailable; using saved city'
@@ -323,7 +323,7 @@ def run(command, city=''):
     if command in ('city', 'automatic', 'unit'):
         save_settings(config)
     ids.update({name: {'enabled': True} for name in CONTROLS})
-    ids.update({'location': {'text': place['name'], 'tooltip': place['name']}, 'status': {'components': []}})
+    ids.update({'location': {'text': place.get('city', place['name']), 'tooltip': place['name']}, 'status': {'components': []}})
     if command in ('city', 'automatic', 'unit'):
         ids.update({name: {'enabled': True} for name in CONFIG_CONTROLS})
         ids.update({'mode': {'text': mode}, 'city': {'text': config['city'], 'enabled': True}, 'settings-error': {'components': []}})
